@@ -15,6 +15,7 @@ public class Bond {
     private static final String COMMAND = GREEN + "> ";
     private static final String UNMARKED = "[ ]";
     private static final String MARKED = "[X]";
+
     private static final Task[] taskList = new Task[100];
     private static int taskCount = 0;
 
@@ -28,21 +29,20 @@ public class Bond {
         System.out.println(bye);
     }
 
-    public static void addToList (String taskDescription) {
+    public static void addToList(String taskDescription) {
         taskList[taskCount] = new Task(taskDescription);
         taskCount += 1;
         System.out.println(TAB + WHITE + "added: " + taskDescription);
         System.out.print(GREEN + COMMAND);
     }
 
-    public static void showList () {
+    public static void showList() {
         System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
         for (int i = 0; taskList[i] != null; i++) {
             System.out.printf(TAB + WHITE + "%d" + ". ", i + 1);
             if (taskList[i].getIsDone()) {
                 System.out.print(MARKED);
-            }
-            else {
+            } else {
                 System.out.print(UNMARKED);
             }
             System.out.print(" " + taskList[i].getDescription() + "\n");
@@ -71,14 +71,11 @@ public class Bond {
         while (!(instruction = in.nextLine()).equals("bye")) {
             if (instruction.equals("list")) {
                 showList();
-            }
-            else if (instruction.startsWith("mark")) {
+            } else if (instruction.startsWith("mark")) {
                 markTask(Integer.parseInt(instruction.substring(5)));
-            }
-            else if (instruction.startsWith("unmark")) {
+            } else if (instruction.startsWith("unmark")) {
                 unmarkTask(Integer.parseInt(instruction.substring(7)));
-            }
-            else {
+            } else {
                 addToList(instruction);
             }
         }
