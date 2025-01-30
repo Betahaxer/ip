@@ -13,6 +13,13 @@ public class Bond {
     }
     public static void main(String[] args) {
         greet();
+        Scanner in = new Scanner(System.in);
+        String instruction;
+        String line ="-----------------------------------------------------";
+
+        while (!(instruction = in.nextLine()).equals("bye")) {
+            System.out.println(line + "\n" + instruction + "\n" + line);
+        }
         sayBye();
     }
 }
