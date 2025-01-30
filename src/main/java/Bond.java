@@ -1,4 +1,5 @@
 import java.util.Scanner;
+
 public class Bond {
     private static final String RESET = "\u001B[0m";
     private static final String BOLD = "\u001B[1m";
@@ -10,9 +11,11 @@ public class Bond {
     private static final String BLUE = "\u001B[34m";
     private static final String WHITE = "\033[97m";
     private static final String HIGHLIGHT = "\u001B[43m";
-    private static final String TAB = "    ";
-    private static final String COMMAND = "> ";
-    private static String[] list = new String[100];
+    private static final String TAB = WHITE + "    ";
+    private static final String COMMAND = GREEN + "> ";
+    private static final String UNMARKED = "[ ]";
+    private static final String MARKED = "[X]";
+    private static final Task[] taskList = new Task[100];
     private static int taskCount = 0;
 
     public static void greet() {
@@ -25,18 +28,40 @@ public class Bond {
         System.out.println(bye);
     }
 
-    public static void addToList (String task) {
-        list[taskCount] = task;
+    public static void addToList (String taskDescription) {
+        taskList[taskCount] = new Task(taskDescription);
         taskCount += 1;
-        System.out.println(TAB + WHITE + "added: " + task);
+        System.out.println(TAB + WHITE + "added: " + taskDescription);
         System.out.print(GREEN + COMMAND);
     }
 
     public static void showList () {
-        for (int i = 0; list[i] != null; i++) {
-            System.out.printf(TAB + WHITE + "%d" + ". " + list[i] + "\n", i + 1);
+        System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
+        for (int i = 0; taskList[i] != null; i++) {
+            System.out.printf(TAB + WHITE + "%d" + ". ", i + 1);
+            if (taskList[i].getIsDone()) {
+                System.out.print(MARKED);
+            }
+            else {
+                System.out.print(UNMARKED);
+            }
+            System.out.print(" " + taskList[i].getDescription() + "\n");
         }
         System.out.print(GREEN + COMMAND);
+    }
+
+    public static void markTask(int itemNumber) {
+        taskList[itemNumber - 1].markAsDone();
+        System.out.println(WHITE + "Woof! This task was marked as done:");
+        System.out.println("  " + MARKED + " " + taskList[itemNumber - 1].getDescription());
+        System.out.print(COMMAND);
+    }
+
+    public static void unmarkTask(int itemNumber) {
+        taskList[itemNumber - 1].markAsNotDone();
+        System.out.println(WHITE + "Awoof! I've marked this task as undone:");
+        System.out.println("  " + UNMARKED + " " + taskList[itemNumber - 1].getDescription());
+        System.out.print(COMMAND);
     }
 
     public static void main(String[] args) {
@@ -46,6 +71,12 @@ public class Bond {
         while (!(instruction = in.nextLine()).equals("bye")) {
             if (instruction.equals("list")) {
                 showList();
+            }
+            else if (instruction.startsWith("mark")) {
+                markTask(Integer.parseInt(instruction.substring(5)));
+            }
+            else if (instruction.startsWith("unmark")) {
+                unmarkTask(Integer.parseInt(instruction.substring(7)));
             }
             else {
                 addToList(instruction);
