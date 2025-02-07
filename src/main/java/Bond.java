@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Bond {
@@ -31,22 +32,18 @@ public class Bond {
 
     public static void addToList(String taskDescription) {
         taskList[taskCount] = new Task(taskDescription);
-        taskCount += 1;
-        System.out.println(TAB + WHITE + "added: " + taskDescription);
-        System.out.print(GREEN + COMMAND);
+        System.out.println(TAB + "added: " + taskList[taskCount].getDescription());
+        System.out.print(COMMAND);
+        taskCount++;
     }
 
     public static void showList() {
         System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
         for (int i = 0; taskList[i] != null; i++) {
             System.out.printf(TAB + WHITE + "%d" + ". ", i + 1);
-            if (taskList[i].getIsDone()) {
-                System.out.print(MARKED);
-            } else {
-                System.out.print(UNMARKED);
-            }
-            System.out.print(" " + taskList[i].getDescription() + "\n");
+            System.out.println(taskList[i]);
         }
+        System.out.print(System.lineSeparator());
         System.out.print(GREEN + COMMAND);
     }
 
@@ -79,6 +76,12 @@ public class Bond {
                 break;
             case "unmark":
                 unmarkTask(Integer.parseInt(input.split(" ")[1]));
+                break;
+            case "todo":
+                taskList[taskCount] = new Todo(input.substring(5));
+                System.out.println(TAB + taskList[taskCount]);
+                System.out.print(COMMAND);
+                taskCount++;
                 break;
             default:
                 addToList(input);

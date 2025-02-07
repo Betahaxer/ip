@@ -23,4 +23,13 @@ public class Task {
         return this.isDone;
     }
 
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[%s] ", getIsDone() ? "X" : " ") + getDescription();
+    }
+
 }
