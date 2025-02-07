@@ -67,17 +67,24 @@ public class Bond {
     public static void main(String[] args) {
         greet();
         Scanner in = new Scanner(System.in);
-        String instruction;
-        while (!(instruction = in.nextLine()).equals("bye")) {
-            if (instruction.equals("list")) {
+        String input = in.nextLine();
+        while (!(input.equals("bye"))) {
+            String command = input.split(" ")[0];
+            switch (command) {
+            case "list":
                 showList();
-            } else if (instruction.startsWith("mark")) {
-                markTask(Integer.parseInt(instruction.substring(5)));
-            } else if (instruction.startsWith("unmark")) {
-                unmarkTask(Integer.parseInt(instruction.substring(7)));
-            } else {
-                addToList(instruction);
+                break;
+            case "mark":
+                markTask(Integer.parseInt(input.split(" ")[1]));
+                break;
+            case "unmark":
+                unmarkTask(Integer.parseInt(input.split(" ")[1]));
+                break;
+            default:
+                addToList(input);
+                break;
             }
+            input = in.nextLine();
         }
         sayBye();
     }
