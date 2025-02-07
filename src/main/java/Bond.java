@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Bond {
@@ -37,13 +36,13 @@ public class Bond {
         taskCount++;
     }
 
-    public static void showList() {
+    public static void printList() {
         System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
         for (int i = 0; taskList[i] != null; i++) {
             System.out.printf(TAB + WHITE + "%d" + ". ", i + 1);
             System.out.println(taskList[i]);
         }
-        System.out.print(System.lineSeparator());
+        System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", taskCount));
         System.out.print(GREEN + COMMAND);
     }
 
@@ -69,7 +68,7 @@ public class Bond {
             String command = input.split(" ")[0];
             switch (command) {
             case "list":
-                showList();
+                printList();
                 break;
             case "mark":
                 markTask(Integer.parseInt(input.split(" ")[1]));
@@ -79,6 +78,23 @@ public class Bond {
                 break;
             case "todo":
                 taskList[taskCount] = new Todo(input.substring(5));
+                System.out.println(TAB + taskList[taskCount]);
+                System.out.print(COMMAND);
+                taskCount++;
+                break;
+            case "deadline":
+                String deadlineDescription = input.substring(8, input.indexOf("/by")).trim();
+                String by = input.substring(input.indexOf("/by") + 4).trim();
+                taskList[taskCount] = new Deadline(deadlineDescription, by);
+                System.out.println(TAB + taskList[taskCount]);
+                System.out.print(COMMAND);
+                taskCount++;
+                break;
+            case "event":
+                String eventDescription = input.substring(6, input.indexOf("/from")).trim();
+                String from = input.substring(input.indexOf("/from") + 6, input.indexOf("/to")).trim();
+                String to = input.substring(input.indexOf("/to") + 4).trim();
+                taskList[taskCount] = new Event(eventDescription, from, to);
                 System.out.println(TAB + taskList[taskCount]);
                 System.out.print(COMMAND);
                 taskCount++;
