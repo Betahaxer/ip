@@ -1,13 +1,11 @@
+package TaskTypes;
+
 public class Deadline extends Todo {
     protected String by;
 
     public Deadline(String description, String by) {
         super(description);
         super.setDone(false);
-        this.by = by;
-    }
-
-    public void setBy(String by) {
         this.by = by;
     }
 
