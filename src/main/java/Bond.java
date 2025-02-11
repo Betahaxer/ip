@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Bond {
@@ -71,10 +72,19 @@ public class Bond {
     }
 
     public static void addTodo(String input) {
-        taskList[taskCount] = new Todo(input.substring(5));
-        System.out.println(TAB + taskList[taskCount]);
-        System.out.print(COMMAND);
-        taskCount++;
+        try {
+            String[] splitInput = input.split(" ", 2);
+            if (splitInput.length < 2 || splitInput[1].trim().isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            taskList[taskCount] = new Todo(input.substring(5));
+            System.out.println(TAB + taskList[taskCount]);
+            System.out.print(COMMAND);
+            taskCount++;
+        } catch (IllegalArgumentException e) {
+            System.out.println(TAB + "To add a todo: todo {todo_description}");
+            System.out.print(COMMAND);
+        }
     }
 
     public static void addDeadline(String input) {
@@ -87,39 +97,56 @@ public class Bond {
     }
 
     public static void addEvent(String input) {
-        String eventDescription = input.substring(6, input.indexOf("/from")).trim();
-        String from = input.substring(input.indexOf("/from") + 6, input.indexOf("/to")).trim();
-        String to = input.substring(input.indexOf("/to") + 4).trim();
-        taskList[taskCount] = new Event(eventDescription, from, to);
-        System.out.println(TAB + taskList[taskCount]);
-        System.out.print(COMMAND);
-        taskCount++;
+        boolean isProperlyFormatted = input.contains("/from") && input.contains("/to");
+        boolean isFromEmpty = (input.indexOf("/from") + 6 == input.indexOf("/to"));
+        boolean isToEmpty = (input.indexOf("/to") + 4 >= input.length());
+        try {
+            if (!isProperlyFormatted || isFromEmpty || isToEmpty) {
+                throw new IllegalArgumentException();
+            }
+            String eventDescription = input.substring(6, input.indexOf("/from")).trim();
+            String from = input.substring(input.indexOf("/from") + 6, input.indexOf("/to")).trim();
+            String to = input.substring(input.indexOf("/to") + 4).trim();
+            taskList[taskCount] = new Event(eventDescription, from, to);
+            System.out.println(TAB + taskList[taskCount]);
+            System.out.print(COMMAND);
+            taskCount++;
+        } catch (IllegalArgumentException e) {
+            System.out.println(TAB + "To add an event: event {event_description} /from {date/time} /to {date/time}");
+            System.out.print(COMMAND);
+        }
     }
 
     public static void executeCommand(String input) {
-        String command = input.split(" ")[0];
-        switch (command) {
-        case LIST:
-            printList();
-            break;
-        case MARK:
-            markTask(input);
-            break;
-        case UNMARK:
-            unmarkTask(input);
-            break;
-        case TODO:
-            addTodo(input);
-            break;
-        case DEADLINE:
-            addDeadline(input);
-            break;
-        case EVENT:
-            addEvent(input);
-            break;
-        default:
-            addToList(input);
-            break;
+        String command = null;
+        String description = null;
+        try {
+            command = input.split(" ", 2)[0];
+            switch (command) {
+            case LIST:
+                printList();
+                break;
+            case MARK:
+                markTask(input);
+                break;
+            case UNMARK:
+                unmarkTask(input);
+                break;
+            case TODO:
+                addTodo(input);
+                break;
+            case DEADLINE:
+                addDeadline(input);
+                break;
+            case EVENT:
+                addEvent(input);
+                break;
+            default:
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(TAB + "Invalid command! These are the commands possible: todo, deadline, event, mark, unmark, list.");
+            System.out.print(COMMAND);
         }
     }
 
