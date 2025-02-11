@@ -1,4 +1,12 @@
+package Bond;
+
 import java.util.Scanner;
+
+import Exceptions.IllegalArgumentException;
+import TaskTypes.Deadline;
+import TaskTypes.Event;
+import TaskTypes.Task;
+import TaskTypes.Todo;
 
 public class Bond {
     //colours for text output
@@ -37,13 +45,6 @@ public class Bond {
         System.out.println(bye);
     }
 
-    public static void addToList(String taskDescription) {
-        taskList[taskCount] = new Task(taskDescription);
-        System.out.println(TAB + "added: " + taskList[taskCount].getDescription());
-        System.out.print(COMMAND);
-        taskCount++;
-    }
-
     public static void printList() {
         System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
         for (int i = 0; taskList[i] != null; i++) {
@@ -74,14 +75,14 @@ public class Bond {
         try {
             String[] splitInput = input.split(" ", 2);
             if (splitInput.length < 2 || splitInput[1].trim().isEmpty()) {
-                throw new IllegalArgumentException();
+                throw new Exceptions.IllegalArgumentException();
             }
 
             taskList[taskCount] = new Todo(input.substring(TODO.length() + 1));
             System.out.println(TAB + taskList[taskCount]);
             System.out.print(COMMAND);
             taskCount++;
-        } catch (IllegalArgumentException e) {
+        } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add a todo: todo {todo_description}");
             System.out.print(COMMAND);
         }
@@ -92,20 +93,20 @@ public class Bond {
             String[] splitInput = input.split("/by", 2);
             boolean containsAllArguments = splitInput.length == 2;
             if (!containsAllArguments) {
-                throw new IllegalArgumentException();
+                throw new Exceptions.IllegalArgumentException();
             }
 
             String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
             String byDescription = splitInput[1].trim();
             if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
-                throw new IllegalArgumentException();
+                throw new Exceptions.IllegalArgumentException();
             }
 
             taskList[taskCount] = new Deadline(deadlineDescription, byDescription);
             System.out.println(TAB + taskList[taskCount]);
             System.out.print(COMMAND);
             taskCount++;
-        } catch (IllegalArgumentException e) {
+        } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add a deadline: deadline {deadline_descrption} /by {date/time}");
             System.out.print(COMMAND);
         }
@@ -115,7 +116,7 @@ public class Bond {
         try {
             boolean containsAllArguments = input.contains("/from") && input.contains("/to");
             if (!containsAllArguments) {
-                throw new IllegalArgumentException();
+                throw new Exceptions.IllegalArgumentException();
             }
 
             String[] splitInput = input.split("/to", 2);
@@ -123,24 +124,22 @@ public class Bond {
             String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
             String toDescription = splitInput[1].trim();
             if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
-                throw new IllegalArgumentException();
+                throw new Exceptions.IllegalArgumentException();
             }
 
             taskList[taskCount] = new Event(eventDescription, fromDescription, toDescription);
             System.out.println(TAB + taskList[taskCount]);
             System.out.print(COMMAND);
             taskCount++;
-        } catch (IllegalArgumentException e) {
+        } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add an event: event {event_description} /from {date/time} /to {date/time}");
             System.out.print(COMMAND);
         }
     }
 
     public static void executeCommand(String input) {
-        String command = null;
-        String description = null;
         try {
-            command = input.split(" ", 2)[0];
+            String command = input.split(" ", 2)[0];
             switch (command) {
             case LIST:
                 printList();
@@ -161,7 +160,7 @@ public class Bond {
                 addEvent(input);
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new Exceptions.IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
             System.out.println(TAB + "Invalid command! These are the commands possible: todo, deadline, event, mark, unmark, list.");
