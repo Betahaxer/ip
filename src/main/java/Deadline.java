@@ -7,8 +7,16 @@ public class Deadline extends Todo {
         this.by = by;
     }
 
+    public void setBy(String by) {
+        this.by = by;
+    }
+
+    public String getBy() {
+        return by;
+    }
+
     @Override
     public String toString() {
-        return "[D]" + String.format("[%s] ", this.isDone ? "X" : " ") + this.description + " (by: " + this.by + ")";
+        return "[D]" + String.format("[%s] ", super.getIsDone() ? "X" : " ") + super.getDescription() + " (by: " + getBy() + ")";
     }
 }
