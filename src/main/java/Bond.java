@@ -112,17 +112,21 @@ public class Bond {
     }
 
     public static void addEvent(String input) {
-        boolean isProperlyFormatted = input.contains("/from") && input.contains("/to");
-        boolean isFromEmpty = (input.indexOf("/from") + 6 == input.indexOf("/to"));
-        boolean isToEmpty = (input.indexOf("/to") + 4 >= input.length());
         try {
-            if (!isProperlyFormatted || isFromEmpty || isToEmpty) {
+            boolean containsAllArguments = input.contains("/from") && input.contains("/to");
+            if (!containsAllArguments) {
                 throw new IllegalArgumentException();
             }
-            String eventDescription = input.substring(6, input.indexOf("/from")).trim();
-            String from = input.substring(input.indexOf("/from") + 6, input.indexOf("/to")).trim();
-            String to = input.substring(input.indexOf("/to") + 4).trim();
-            taskList[taskCount] = new Event(eventDescription, from, to);
+
+            String[] splitInput = input.split("/to", 2);
+            String eventDescription = splitInput[0].substring(EVENT.length() + 1, splitInput[0].indexOf("/from")).trim();
+            String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
+            String toDescription = splitInput[1].trim();
+            if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+
+            taskList[taskCount] = new Event(eventDescription, fromDescription, toDescription);
             System.out.println(TAB + taskList[taskCount]);
             System.out.print(COMMAND);
             taskCount++;
