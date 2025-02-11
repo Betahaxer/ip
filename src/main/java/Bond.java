@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Bond {
@@ -77,7 +76,8 @@ public class Bond {
             if (splitInput.length < 2 || splitInput[1].trim().isEmpty()) {
                 throw new IllegalArgumentException();
             }
-            taskList[taskCount] = new Todo(input.substring(5));
+
+            taskList[taskCount] = new Todo(input.substring(TODO.length() + 1));
             System.out.println(TAB + taskList[taskCount]);
             System.out.print(COMMAND);
             taskCount++;
@@ -88,12 +88,27 @@ public class Bond {
     }
 
     public static void addDeadline(String input) {
-        String deadlineDescription = input.substring(8, input.indexOf("/by")).trim();
-        String by = input.substring(input.indexOf("/by") + 4).trim();
-        taskList[taskCount] = new Deadline(deadlineDescription, by);
-        System.out.println(TAB + taskList[taskCount]);
-        System.out.print(COMMAND);
-        taskCount++;
+        try {
+            String[] splitInput = input.split("/by", 2);
+            boolean containsAllArguments = splitInput.length == 2;
+            if (!containsAllArguments) {
+                throw new IllegalArgumentException();
+            }
+
+            String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
+            String byDescription = splitInput[1].trim();
+            if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+
+            taskList[taskCount] = new Deadline(deadlineDescription, byDescription);
+            System.out.println(TAB + taskList[taskCount]);
+            System.out.print(COMMAND);
+            taskCount++;
+        } catch (IllegalArgumentException e) {
+            System.out.println(TAB + "To add a deadline: deadline {deadline_descrption} /by {date/time}");
+            System.out.print(COMMAND);
+        }
     }
 
     public static void addEvent(String input) {
