@@ -1,10 +1,5 @@
 package Bond;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import static Constants.Commands.DEADLINE;
 import static Constants.Commands.DELETE;
 import static Constants.Commands.EVENT;
@@ -14,9 +9,9 @@ import static Constants.Commands.MARK;
 import static Constants.Commands.TODO;
 import static Constants.Commands.UNMARK;
 import static Constants.Formatting.COMMAND;
-import static Constants.Formatting.GREEN;
 import static Constants.Formatting.TAB;
 import static Constants.Formatting.WHITE;
+import static Constants.Messages.BOND_ASCII;
 import static Constants.Messages.DEADLINE_USAGE;
 import static Constants.Messages.DELETE_USAGE;
 import static Constants.Messages.EVENT_USAGE;
@@ -34,8 +29,12 @@ import static Constants.Messages.TASK_MARKED_UNDONE;
 import static Constants.Messages.TODO_USAGE;
 import static Constants.Messages.UNMARK_USAGE;
 
-import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import Exceptions.IllegalArgumentException;
 import TaskTypes.Deadline;
