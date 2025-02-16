@@ -2,6 +2,7 @@ package Bond;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -36,9 +37,7 @@ public class Bond {
 
     private static final int TASK_SIZE = 100;
 
-    private static final Task[] taskList = new Task[TASK_SIZE];
     public static ArrayList<Task> tasks = new ArrayList<>();
-    private static int taskCount = 0;
 
     public static void greet() {
         String greet = TAB + WHITE + "Hello! I'm Bond, a dog that can predict the future.\n" + TAB + "What can I do for you?\n" + GREEN + COMMAND;
@@ -52,41 +51,71 @@ public class Bond {
 
     public static void printList() {
         System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
-        for (int i = 0; taskList[i] != null; i++) {
-            System.out.printf(TAB + WHITE + "%d" + ". ", i + 1);
-            System.out.println(taskList[i]);
+        for (Task t : tasks) {
+            System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
+            System.out.println(t);
         }
-        System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", taskCount));
+        System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", tasks.size()));
         System.out.print(GREEN + COMMAND);
     }
 
     public static void markTask(String input) {
-        int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        taskList[taskNumber - 1].markAsDone();
-        System.out.println(WHITE + "Woof! This task was marked as done:");
-        System.out.println("  " + MARKED + " " + taskList[taskNumber - 1].getDescription());
-        System.out.print(COMMAND);
-    }
+        String[] splitInput = input.split(" ");
+        String command = splitInput[0];
+        try {
+            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
+            if (!isValidInput) {
+                throw new IllegalArgumentException();
+            }
 
-    public static void unmarkTask(String input) {
-        int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        taskList[taskNumber - 1].markAsNotDone();
-        System.out.println(WHITE + "Awoof! I've marked this task as undone:");
-        System.out.println("  " + UNMARKED + " " + taskList[taskNumber - 1].getDescription());
-        System.out.print(COMMAND);
+            int taskNumber = Integer.parseInt(input.split(" ")[1]);
+            int indexOfTask = taskNumber - 1;
+
+            switch (command) {
+            case MARK:
+                tasks.get(indexOfTask).markAsDone();
+                System.out.println(TAB + "Woof! This task was marked as done:");
+                System.out.println(TAB + tasks.get(indexOfTask));
+                break;
+            case UNMARK:
+                tasks.get(indexOfTask).markAsNotDone();
+                System.out.println(TAB + "Awoof! I've marked this task as undone:");
+                System.out.println(TAB + tasks.get(indexOfTask));
+                break;
+            default:
+                throw new IllegalArgumentException();
+            }
+
+        } catch (IllegalArgumentException | NumberFormatException e) {
+            switch (command) {
+            case MARK:
+                System.out.println(TAB + "To mark a task: mark {task_number}");
+                break;
+            case UNMARK:
+                System.out.println(TAB + "To unmark a task: mark {task_number}");
+                break;
+            default:
+                System.out.println(TAB + "Invalid command. Please use mark or unmark followed by a task number.");
+                break;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println(TAB + "Please enter a correct task number");
+        } finally {
+            System.out.print(COMMAND);
+        }
     }
 
     public static void addTodo(String input) {
         try {
             String[] splitInput = input.split(" ", 2);
-            if (splitInput.length < 2 || splitInput[1].trim().isEmpty()) {
+            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
+            if (!isValidInput) {
                 throw new Exceptions.IllegalArgumentException();
             }
-
-            taskList[taskCount] = new Todo(input.substring(TODO.length() + 1));
-            System.out.println(TAB + taskList[taskCount]);
+            Todo newTodo = new Todo(input.substring(TODO.length() + 1));
+            tasks.add(newTodo);
+            System.out.println(TAB + newTodo);
             System.out.print(COMMAND);
-            taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add a todo: todo {todo_description}");
             System.out.print(COMMAND);
@@ -95,26 +124,29 @@ public class Bond {
 
     public static void addDeadline(String input) {
         try {
-            String[] splitInput = input.split("/by", 2);
-            boolean containsAllArguments = splitInput.length == 2;
-            if (!containsAllArguments) {
-                throw new Exceptions.IllegalArgumentException();
-            }
-
-            String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
-            String byDescription = splitInput[1].trim();
-            if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
-                throw new Exceptions.IllegalArgumentException();
-            }
-
-            taskList[taskCount] = new Deadline(deadlineDescription, byDescription);
-            System.out.println(TAB + taskList[taskCount]);
+            Deadline newDeadline = getDeadline(input);
+            tasks.add(newDeadline);
+            System.out.println(TAB + newDeadline);
             System.out.print(COMMAND);
-            taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + "To add a deadline: deadline {deadline_descrption} /by {date/time}");
+            System.out.println(TAB + "To add a deadline: deadline {deadline_description} /by {date/time}");
             System.out.print(COMMAND);
         }
+    }
+
+    private static Deadline getDeadline(String input) throws IllegalArgumentException {
+        String[] splitInput = input.split("/by", 2);
+        boolean containsAllArguments = splitInput.length == 2;
+        if (!containsAllArguments) {
+            throw new IllegalArgumentException();
+        }
+
+        String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
+        String byDescription = splitInput[1].trim();
+        if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return new Deadline(deadlineDescription, byDescription);
     }
 
     public static void addEvent(String input) {
@@ -123,23 +155,25 @@ public class Bond {
             if (!containsAllArguments) {
                 throw new Exceptions.IllegalArgumentException();
             }
-
-            String[] splitInput = input.split("/to", 2);
-            String eventDescription = splitInput[0].substring(EVENT.length() + 1, splitInput[0].indexOf("/from")).trim();
-            String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
-            String toDescription = splitInput[1].trim();
-            if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
-                throw new Exceptions.IllegalArgumentException();
-            }
-
-            taskList[taskCount] = new Event(eventDescription, fromDescription, toDescription);
-            System.out.println(TAB + taskList[taskCount]);
+            Event newEvent = getEvent(input);
+            tasks.add(newEvent);
+            System.out.println(TAB + newEvent);
             System.out.print(COMMAND);
-            taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add an event: event {event_description} /from {date/time} /to {date/time}");
             System.out.print(COMMAND);
         }
+    }
+
+    private static Event getEvent(String input) throws IllegalArgumentException {
+        String[] splitInput = input.split("/to", 2);
+        String eventDescription = splitInput[0].substring(EVENT.length() + 1, splitInput[0].indexOf("/from")).trim();
+        String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
+        String toDescription = splitInput[1].trim();
+        if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return new Event(eventDescription, fromDescription, toDescription);
     }
 
     public static void executeCommand(String input) {
@@ -150,10 +184,8 @@ public class Bond {
                 printList();
                 break;
             case MARK:
-                markTask(input);
-                break;
             case UNMARK:
-                unmarkTask(input);
+                markTask(input);
                 break;
             case TODO:
                 addTodo(input);
@@ -241,7 +273,16 @@ public class Bond {
         }
     }
 
-    public static void saveFile() {
+    public static void saveFile(String filePath, ArrayList<Task> tasks) {
+        try {
+            FileWriter fw = new FileWriter(filePath);
+            for (Task t : tasks) {
+                fw.write(t.toSaveString() + System.lineSeparator());
+            }
+            fw.close();
+        } catch (IOException e) {
+            System.err.println("Error writing to file");
+        }
 
     }
 
@@ -250,12 +291,16 @@ public class Bond {
         createFile(filePath);
         parseFile(filePath);
         greet();
+
         Scanner in = new Scanner(System.in);
         String input = in.nextLine();
+
         while (!(input.equals(EXIT_APP))) {
             executeCommand(input);
             input = in.nextLine();
         }
+
+        saveFile(filePath, tasks);
         sayBye();
     }
 }
