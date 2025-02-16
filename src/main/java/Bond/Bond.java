@@ -55,19 +55,49 @@ public class Bond {
     }
 
     public static void markTask(String input) {
-        int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        tasks.get(taskNumber - 1).markAsDone();
-        System.out.println(WHITE + "Woof! This task was marked as done:");
-        System.out.println("  " + MARKED + " " + tasks.get(taskNumber - 1).getDescription());
-        System.out.print(COMMAND);
-    }
+        String[] splitInput = input.split(" ");
+        String command = splitInput[0];
+        try {
+            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
+            if (!isValidInput) {
+                throw new IllegalArgumentException();
+            }
 
-    public static void unmarkTask(String input) {
-        int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        tasks.get(taskNumber - 1).markAsNotDone();
-        System.out.println(WHITE + "Awoof! I've marked this task as undone:");
-        System.out.println("  " + UNMARKED + " " + tasks.get(taskNumber - 1).getDescription());
-        System.out.print(COMMAND);
+            int taskNumber = Integer.parseInt(input.split(" ")[1]);
+            int indexOfTask = taskNumber - 1;
+
+            switch (command) {
+            case MARK:
+                tasks.get(indexOfTask).markAsDone();
+                System.out.println(TAB + "Woof! This task was marked as done:");
+                System.out.println(TAB + tasks.get(indexOfTask));
+                break;
+            case UNMARK:
+                tasks.get(indexOfTask).markAsNotDone();
+                System.out.println(TAB + "Awoof! I've marked this task as undone:");
+                System.out.println(TAB + tasks.get(indexOfTask));
+                break;
+            default:
+                throw new IllegalArgumentException();
+            }
+
+        } catch (IllegalArgumentException | NumberFormatException e) {
+            switch (command) {
+            case MARK:
+                System.out.println(TAB + "To mark a task: mark {task_number}");
+                break;
+            case UNMARK:
+                System.out.println(TAB + "To unmark a task: mark {task_number}");
+                break;
+            default:
+                System.out.println(TAB + "Invalid command. Please use mark or unmark followed by a task number.");
+                break;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println(TAB + "Please enter a correct task number");
+        } finally {
+            System.out.print(COMMAND);
+        }
     }
 
     public static void addTodo(String input) {
@@ -166,10 +196,8 @@ public class Bond {
                 printList();
                 break;
             case MARK:
-                markTask(input);
-                break;
             case UNMARK:
-                unmarkTask(input);
+                markTask(input);
                 break;
             case TODO:
                 addTodo(input);
