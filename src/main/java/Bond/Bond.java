@@ -1,7 +1,36 @@
 package Bond;
 
-import java.util.Scanner;
+import static Constants.Commands.DEADLINE;
+import static Constants.Commands.DELETE;
+import static Constants.Commands.EVENT;
+import static Constants.Commands.EXIT_APP;
+import static Constants.Commands.LIST;
+import static Constants.Commands.MARK;
+import static Constants.Commands.TODO;
+import static Constants.Commands.UNMARK;
+import static Constants.Formatting.COMMAND;
+import static Constants.Formatting.GREEN;
+import static Constants.Formatting.TAB;
+import static Constants.Formatting.WHITE;
+import static Constants.Messages.DEADLINE_USAGE;
+import static Constants.Messages.DELETE_USAGE;
+import static Constants.Messages.EVENT_USAGE;
+import static Constants.Messages.GOODBYE;
+import static Constants.Messages.GREETING;
+import static Constants.Messages.INVALID_COMMAND;
+import static Constants.Messages.INVALID_MARK_COMMAND;
+import static Constants.Messages.INVALID_TASK_NUMBER;
+import static Constants.Messages.LIST_FOOTER;
+import static Constants.Messages.LIST_HEADER;
+import static Constants.Messages.MARK_USAGE;
+import static Constants.Messages.TASK_DELETED;
+import static Constants.Messages.TASK_MARKED_DONE;
+import static Constants.Messages.TASK_MARKED_UNDONE;
+import static Constants.Messages.TODO_USAGE;
+import static Constants.Messages.UNMARK_USAGE;
+
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import Exceptions.IllegalArgumentException;
 import TaskTypes.Deadline;
@@ -10,47 +39,24 @@ import TaskTypes.Task;
 import TaskTypes.Todo;
 
 public class Bond {
-    //colours for text output
-    private static final String GREEN = "\u001B[32m";
-    private static final String WHITE = "\033[97m";
-
-    //formatting related
-    private static final String TAB = WHITE + "    ";
-    private static final String COMMAND = GREEN + "> ";
-
-    //for lists
-    private static final String UNMARKED = "[ ]";
-    private static final String MARKED = "[X]";
-
-    //commands
-    private static final String LIST = "list";
-    private static final String MARK = "mark";
-    private static final String UNMARK = "unmark";
-    private static final String TODO = "todo";
-    private static final String DEADLINE = "deadline";
-    private static final String EVENT = "event";
-    private static final String DELETE = "delete";
-    private static final String EXIT_APP = "bye";
 
     private static ArrayList<Task> tasks = new ArrayList<>();
 
     public static void greet() {
-        String greet = TAB + WHITE + "Hello! I'm Bond, a dog that can predict the future.\n" + TAB + "What can I do for you?\n" + GREEN + COMMAND;
-        System.out.print(greet);
+        System.out.print(GREETING);
     }
 
     public static void sayBye() {
-        String bye = TAB + WHITE + "Woof. Hope to see you again soon!";
-        System.out.println(bye);
+        System.out.println(GOODBYE);
     }
 
     public static void printList() {
-        System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
+        System.out.println(TAB + LIST_HEADER);
         for (Task t : tasks) {
             System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
             System.out.println(t);
         }
-        System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", tasks.size()));
+        System.out.println(TAB + String.format(LIST_FOOTER, tasks.size()));
         System.out.print(GREEN + COMMAND);
     }
 
@@ -62,41 +68,44 @@ public class Bond {
             if (!isValidInput) {
                 throw new IllegalArgumentException();
             }
-
-            int taskNumber = Integer.parseInt(input.split(" ")[1]);
-            int indexOfTask = taskNumber - 1;
-
-            switch (command) {
-            case MARK:
-                tasks.get(indexOfTask).markAsDone();
-                System.out.println(TAB + "Woof! This task was marked as done:");
-                System.out.println(TAB + tasks.get(indexOfTask));
-                break;
-            case UNMARK:
-                tasks.get(indexOfTask).markAsNotDone();
-                System.out.println(TAB + "Awoof! I've marked this task as undone:");
-                System.out.println(TAB + tasks.get(indexOfTask));
-                break;
-            default:
-                throw new IllegalArgumentException();
-            }
+            findAndMarkTask(input, command);
 
         } catch (IllegalArgumentException | NumberFormatException e) {
             switch (command) {
             case MARK:
-                System.out.println(TAB + "To mark a task: mark {task_number}");
+                System.out.println(TAB + MARK_USAGE);
                 break;
             case UNMARK:
-                System.out.println(TAB + "To unmark a task: mark {task_number}");
+                System.out.println(TAB + UNMARK_USAGE);
                 break;
             default:
-                System.out.println(TAB + "Invalid command. Please use mark or unmark followed by a task number.");
+                System.out.println(TAB + INVALID_MARK_COMMAND);
                 break;
             }
         } catch (IndexOutOfBoundsException e) {
-            System.out.println(TAB + "Please enter a correct task number");
+            System.out.println(TAB + INVALID_TASK_NUMBER);
         } finally {
             System.out.print(COMMAND);
+        }
+    }
+
+    private static void findAndMarkTask(String input, String command) throws IllegalArgumentException, IndexOutOfBoundsException, NumberFormatException {
+        int taskNumber = Integer.parseInt(input.split(" ")[1]);
+        int indexOfTask = taskNumber - 1;
+
+        switch (command) {
+        case MARK:
+            tasks.get(indexOfTask).markAsDone();
+            System.out.println(TAB + TASK_MARKED_DONE);
+            System.out.println(TAB + tasks.get(indexOfTask));
+            break;
+        case UNMARK:
+            tasks.get(indexOfTask).markAsNotDone();
+            System.out.println(TAB + TASK_MARKED_UNDONE);
+            System.out.println(TAB + tasks.get(indexOfTask));
+            break;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 
@@ -110,9 +119,9 @@ public class Bond {
             Todo newTodo = new Todo(input.substring(TODO.length() + 1));
             tasks.add(newTodo);
             System.out.println(TAB + newTodo);
-            System.out.print(COMMAND);
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + "To add a todo: todo {todo_description}");
+            System.out.println(TAB + TODO_USAGE);
+        } finally {
             System.out.print(COMMAND);
         }
     }
@@ -122,9 +131,9 @@ public class Bond {
             Deadline newDeadline = getDeadline(input);
             tasks.add(newDeadline);
             System.out.println(TAB + newDeadline);
-            System.out.print(COMMAND);
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + "To add a deadline: deadline {deadline_description} /by {date/time}");
+            System.out.println(TAB + DEADLINE_USAGE);
+        } finally {
             System.out.print(COMMAND);
         }
     }
@@ -155,7 +164,7 @@ public class Bond {
             System.out.println(TAB + newEvent);
             System.out.print(COMMAND);
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + "To add an event: event {event_description} /from {date/time} /to {date/time}");
+            System.out.println(TAB + EVENT_USAGE);
             System.out.print(COMMAND);
         }
     }
@@ -171,7 +180,7 @@ public class Bond {
         return new Event(eventDescription, fromDescription, toDescription);
     }
 
-    public static void removeTask(String input) {
+    public static void deleteTask(String input) {
         try {
             String[] splitInput = input.split(" ", 2);
             boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
@@ -179,12 +188,13 @@ public class Bond {
                 throw new IllegalArgumentException();
             }
             tasks.remove(Integer.parseInt(splitInput[1]) - 1);
-            System.out.println(TAB + "Deleted task " + splitInput[1] + " from tasks");
-            System.out.print(COMMAND);
+            System.out.println(TAB + String.format(TASK_DELETED, splitInput[1]));
         } catch (IllegalArgumentException e) {
-            System.out.println("To remove a task: remove {task_number}");
+            System.out.println(TAB + DELETE_USAGE);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Please check the task number again");
+            System.out.println(TAB + INVALID_TASK_NUMBER);
+        } finally {
+            System.out.print(COMMAND);
         }
     }
 
@@ -209,16 +219,18 @@ public class Bond {
                 addEvent(input);
                 break;
             case DELETE:
-                removeTask(input);
+                deleteTask(input);
                 break;
             default:
                 throw new Exceptions.IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
-            System.out.println(TAB + "Invalid command! These are the commands possible: todo, deadline, event, mark, unmark, list.");
+            System.out.println(TAB + INVALID_COMMAND);
+        } finally {
             System.out.print(COMMAND);
         }
     }
+
 
     public static void main(String[] args) {
         greet();
