@@ -57,7 +57,6 @@ public class Bond {
             System.out.println(t);
         }
         System.out.println(TAB + String.format(LIST_FOOTER, tasks.size()));
-        System.out.print(GREEN + COMMAND);
     }
 
     public static void markTask(String input) {
@@ -84,8 +83,6 @@ public class Bond {
             }
         } catch (IndexOutOfBoundsException e) {
             System.out.println(TAB + INVALID_TASK_NUMBER);
-        } finally {
-            System.out.print(COMMAND);
         }
     }
 
@@ -121,8 +118,6 @@ public class Bond {
             System.out.println(TAB + newTodo);
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + TODO_USAGE);
-        } finally {
-            System.out.print(COMMAND);
         }
     }
 
@@ -133,8 +128,6 @@ public class Bond {
             System.out.println(TAB + newDeadline);
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + DEADLINE_USAGE);
-        } finally {
-            System.out.print(COMMAND);
         }
     }
 
@@ -162,10 +155,8 @@ public class Bond {
             Event newEvent = getEvent(input);
             tasks.add(newEvent);
             System.out.println(TAB + newEvent);
-            System.out.print(COMMAND);
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + EVENT_USAGE);
-            System.out.print(COMMAND);
         }
     }
 
@@ -193,8 +184,6 @@ public class Bond {
             System.out.println(TAB + DELETE_USAGE);
         } catch (IndexOutOfBoundsException e) {
             System.out.println(TAB + INVALID_TASK_NUMBER);
-        } finally {
-            System.out.print(COMMAND);
         }
     }
 
