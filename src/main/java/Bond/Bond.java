@@ -1,5 +1,10 @@
 package Bond;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import static Constants.Commands.DEADLINE;
 import static Constants.Commands.DELETE;
 import static Constants.Commands.EVENT;
@@ -220,15 +225,102 @@ public class Bond {
         }
     }
 
+    public static void createFile(String filePath) {
+        File taskFile = new File(filePath);
+        File parentDirectory = taskFile.getParentFile();
+
+        if (parentDirectory != null && !parentDirectory.exists()) {
+            boolean dirsCreated = parentDirectory.mkdirs();
+            if (dirsCreated) {
+                System.out.println("Directories created: " + parentDirectory.getAbsolutePath());
+            } else {
+                System.out.println("Failed to create directories!");
+            }
+        }
+        if (!taskFile.exists()) {
+            try {
+                if (taskFile.createNewFile()) {
+                    System.out.println("File created: " + taskFile.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to create the file!");
+                }
+            } catch (IOException e) {
+                System.err.println("Error creating file: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void parseFile(String filePath) {
+        try {
+            File taskFile = new File(filePath);
+            Scanner s = new Scanner(taskFile);
+            while (s.hasNext()) {
+                String[] taskArguments = s.nextLine().trim().split(" \\| ");
+                processTaskFromFile(taskArguments);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found");
+        } catch (IOException e) {
+            System.err.println("Error processing file");
+        }
+    }
+
+    private static void processTaskFromFile(String[] taskArguments) throws IOException {
+        switch (taskArguments[0]) {
+        case "T":
+            Todo newTodo = new Todo(taskArguments[2]);
+            tasks.add(newTodo);
+            if (taskArguments[1].equals("1")) {
+                newTodo.markAsDone();
+            }
+            break;
+        case "D":
+            Deadline newDeadline = new Deadline(taskArguments[2], taskArguments[3]);
+            tasks.add(newDeadline);
+            if (taskArguments[1].equals("1")) {
+                newDeadline.markAsDone();
+            }
+            break;
+        case "E":
+            Event newEvent = new Event(taskArguments[2], taskArguments[3], taskArguments[4]);
+            tasks.add(newEvent);
+            if (taskArguments[1].equals("1")) {
+                newEvent.markAsDone();
+            }
+            break;
+        default:
+            throw new IOException();
+        }
+    }
+
+    public static void saveFile(String filePath, ArrayList<Task> tasks) {
+        try {
+            FileWriter fw = new FileWriter(filePath);
+            for (Task t : tasks) {
+                fw.write(t.toSaveString() + System.lineSeparator());
+            }
+            fw.close();
+        } catch (IOException e) {
+            System.err.println("Error writing to file");
+        }
+
+    }
 
     public static void main(String[] args) {
+        String filePath = "./data/Tasks.txt";
+        createFile(filePath);
+        parseFile(filePath);
         greet();
+
         Scanner in = new Scanner(System.in);
         String input = in.nextLine();
+
         while (!(input.equals(EXIT_APP))) {
             executeCommand(input);
             input = in.nextLine();
         }
+
+        saveFile(filePath, tasks);
         sayBye();
     }
 }

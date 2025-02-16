@@ -1,6 +1,6 @@
 package TaskTypes;
 
-public class Task {
+public abstract class Task {
     private String description;
     private boolean isDone;
 
@@ -33,5 +33,7 @@ public class Task {
     public String toString() {
         return String.format("[%s] ", getIsDone() ? "X" : " ") + getDescription();
     }
+
+    public abstract String toSaveString();
 
 }

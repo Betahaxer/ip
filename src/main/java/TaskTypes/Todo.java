@@ -12,4 +12,8 @@ public class Todo extends Task {
         return "[T]" + String.format("[%s] ", super.getIsDone() ? "X" : " ") + super.getDescription();
     }
 
+    public String toSaveString() {
+        return "T | " + (this.getIsDone() ? "1" : "0") + " | " + this.getDescription();
+    }
+
 }

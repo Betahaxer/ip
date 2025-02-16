@@ -17,4 +17,9 @@ public class Deadline extends Todo {
     public String toString() {
         return "[D]" + String.format("[%s] ", super.getIsDone() ? "X" : " ") + super.getDescription() + " (by: " + getBy() + ")";
     }
+
+    @Override
+    public String toSaveString() {
+        return "D | " + (this.getIsDone() ? "1" : "0") + " | " + this.getDescription() + " | " + this.getBy();
+    }
 }
