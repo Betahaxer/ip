@@ -1,6 +1,7 @@
 package Bond;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import Exceptions.IllegalArgumentException;
 import TaskTypes.Deadline;
@@ -30,9 +31,7 @@ public class Bond {
     private static final String EVENT = "event";
     private static final String EXIT_APP = "bye";
 
-    private static final int TASK_SIZE = 100;
-
-    private static final Task[] taskList = new Task[TASK_SIZE];
+    private static ArrayList<Task> tasks = new ArrayList<>();
     private static int taskCount = 0;
 
     public static void greet() {
@@ -47,9 +46,9 @@ public class Bond {
 
     public static void printList() {
         System.out.println(TAB + "Hmph... The future is uncertain, but these tasks must be completed:");
-        for (int i = 0; taskList[i] != null; i++) {
-            System.out.printf(TAB + WHITE + "%d" + ". ", i + 1);
-            System.out.println(taskList[i]);
+        for (Task t : tasks) {
+            System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
+            System.out.println(t);
         }
         System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", taskCount));
         System.out.print(GREEN + COMMAND);
@@ -57,17 +56,17 @@ public class Bond {
 
     public static void markTask(String input) {
         int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        taskList[taskNumber - 1].markAsDone();
+        tasks.get(taskNumber - 1).markAsDone();
         System.out.println(WHITE + "Woof! This task was marked as done:");
-        System.out.println("  " + MARKED + " " + taskList[taskNumber - 1].getDescription());
+        System.out.println("  " + MARKED + " " + tasks.get(taskNumber - 1).getDescription());
         System.out.print(COMMAND);
     }
 
     public static void unmarkTask(String input) {
         int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        taskList[taskNumber - 1].markAsNotDone();
+        tasks.get(taskNumber - 1).markAsNotDone();
         System.out.println(WHITE + "Awoof! I've marked this task as undone:");
-        System.out.println("  " + UNMARKED + " " + taskList[taskNumber - 1].getDescription());
+        System.out.println("  " + UNMARKED + " " + tasks.get(taskNumber - 1).getDescription());
         System.out.print(COMMAND);
     }
 
@@ -78,8 +77,8 @@ public class Bond {
                 throw new Exceptions.IllegalArgumentException();
             }
 
-            taskList[taskCount] = new Todo(input.substring(TODO.length() + 1));
-            System.out.println(TAB + taskList[taskCount]);
+            tasks.add(new Todo(input.substring(TODO.length() + 1)));
+            System.out.println(TAB + tasks.get(taskCount));
             System.out.print(COMMAND);
             taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
@@ -102,8 +101,8 @@ public class Bond {
                 throw new Exceptions.IllegalArgumentException();
             }
 
-            taskList[taskCount] = new Deadline(deadlineDescription, byDescription);
-            System.out.println(TAB + taskList[taskCount]);
+            tasks.add(new Deadline(deadlineDescription, byDescription));
+            System.out.println(TAB + tasks.get(taskCount));
             System.out.print(COMMAND);
             taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
@@ -127,8 +126,8 @@ public class Bond {
                 throw new Exceptions.IllegalArgumentException();
             }
 
-            taskList[taskCount] = new Event(eventDescription, fromDescription, toDescription);
-            System.out.println(TAB + taskList[taskCount]);
+            tasks.add(new Event(eventDescription, fromDescription, toDescription));
+            System.out.println(TAB + tasks.get(taskCount));
             System.out.print(COMMAND);
             taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
