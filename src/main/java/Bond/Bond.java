@@ -29,10 +29,10 @@ public class Bond {
     private static final String TODO = "todo";
     private static final String DEADLINE = "deadline";
     private static final String EVENT = "event";
+    private static final String DELETE = "delete";
     private static final String EXIT_APP = "bye";
 
     private static ArrayList<Task> tasks = new ArrayList<>();
-    private static int taskCount = 0;
 
     public static void greet() {
         String greet = TAB + WHITE + "Hello! I'm Bond, a dog that can predict the future.\n" + TAB + "What can I do for you?\n" + GREEN + COMMAND;
@@ -50,7 +50,7 @@ public class Bond {
             System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
             System.out.println(t);
         }
-        System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", taskCount));
+        System.out.println(TAB + String.format("Woof %d tasks… I see them all… woof", tasks.size()));
         System.out.print(GREEN + COMMAND);
     }
 
@@ -73,14 +73,14 @@ public class Bond {
     public static void addTodo(String input) {
         try {
             String[] splitInput = input.split(" ", 2);
-            if (splitInput.length < 2 || splitInput[1].trim().isEmpty()) {
+            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
+            if (!isValidInput) {
                 throw new Exceptions.IllegalArgumentException();
             }
-
-            tasks.add(new Todo(input.substring(TODO.length() + 1)));
-            System.out.println(TAB + tasks.get(taskCount));
+            Todo newTodo = new Todo(input.substring(TODO.length() + 1));
+            tasks.add(newTodo);
+            System.out.println(TAB + newTodo);
             System.out.print(COMMAND);
-            taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add a todo: todo {todo_description}");
             System.out.print(COMMAND);
@@ -89,26 +89,29 @@ public class Bond {
 
     public static void addDeadline(String input) {
         try {
-            String[] splitInput = input.split("/by", 2);
-            boolean containsAllArguments = splitInput.length == 2;
-            if (!containsAllArguments) {
-                throw new Exceptions.IllegalArgumentException();
-            }
-
-            String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
-            String byDescription = splitInput[1].trim();
-            if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
-                throw new Exceptions.IllegalArgumentException();
-            }
-
-            tasks.add(new Deadline(deadlineDescription, byDescription));
-            System.out.println(TAB + tasks.get(taskCount));
+            Deadline newDeadline = getDeadline(input);
+            tasks.add(newDeadline);
+            System.out.println(TAB + newDeadline);
             System.out.print(COMMAND);
-            taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + "To add a deadline: deadline {deadline_descrption} /by {date/time}");
+            System.out.println(TAB + "To add a deadline: deadline {deadline_description} /by {date/time}");
             System.out.print(COMMAND);
         }
+    }
+
+    private static Deadline getDeadline(String input) throws IllegalArgumentException {
+        String[] splitInput = input.split("/by", 2);
+        boolean containsAllArguments = splitInput.length == 2;
+        if (!containsAllArguments) {
+            throw new IllegalArgumentException();
+        }
+
+        String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
+        String byDescription = splitInput[1].trim();
+        if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return new Deadline(deadlineDescription, byDescription);
     }
 
     public static void addEvent(String input) {
@@ -117,22 +120,41 @@ public class Bond {
             if (!containsAllArguments) {
                 throw new Exceptions.IllegalArgumentException();
             }
-
-            String[] splitInput = input.split("/to", 2);
-            String eventDescription = splitInput[0].substring(EVENT.length() + 1, splitInput[0].indexOf("/from")).trim();
-            String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
-            String toDescription = splitInput[1].trim();
-            if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
-                throw new Exceptions.IllegalArgumentException();
-            }
-
-            tasks.add(new Event(eventDescription, fromDescription, toDescription));
-            System.out.println(TAB + tasks.get(taskCount));
+            Event newEvent = getEvent(input);
+            tasks.add(newEvent);
+            System.out.println(TAB + newEvent);
             System.out.print(COMMAND);
-            taskCount++;
         } catch (Exceptions.IllegalArgumentException e) {
             System.out.println(TAB + "To add an event: event {event_description} /from {date/time} /to {date/time}");
             System.out.print(COMMAND);
+        }
+    }
+
+    private static Event getEvent(String input) throws IllegalArgumentException {
+        String[] splitInput = input.split("/to", 2);
+        String eventDescription = splitInput[0].substring(EVENT.length() + 1, splitInput[0].indexOf("/from")).trim();
+        String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
+        String toDescription = splitInput[1].trim();
+        if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return new Event(eventDescription, fromDescription, toDescription);
+    }
+
+    public static void removeTask(String input) {
+        try {
+            String[] splitInput = input.split(" ", 2);
+            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
+            if (!isValidInput) {
+                throw new IllegalArgumentException();
+            }
+            tasks.remove(Integer.parseInt(splitInput[1]) - 1);
+            System.out.println(TAB + "Deleted task " + splitInput[1] + " from tasks");
+            System.out.print(COMMAND);
+        } catch (IllegalArgumentException e) {
+            System.out.println("To remove a task: remove {task_number}");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Please check the task number again");
         }
     }
 
@@ -157,6 +179,9 @@ public class Bond {
                 break;
             case EVENT:
                 addEvent(input);
+                break;
+            case DELETE:
+                removeTask(input);
                 break;
             default:
                 throw new Exceptions.IllegalArgumentException();
