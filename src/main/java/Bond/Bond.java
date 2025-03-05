@@ -43,14 +43,21 @@ import TaskTypes.Task;
 import TaskTypes.Todo;
 
 import UI.Ui;
+import Storage.Storage;
 
 public class Bond {
 
     private static ArrayList<Task> tasks = new ArrayList<>();
     private static Ui ui;
+    private static Storage storage;
 
     public Bond() {
         ui = new Ui();
+        try {
+            storage = new Storage();
+        } catch (Storage.InvalidStorageFilePathException | Storage.StorageOperationException e) {
+            ui.showError("Invalid file path!");
+        }
     }
 
     public static void markTask(String input) {
@@ -214,92 +221,14 @@ public class Bond {
         }
     }
 
-    public static void createFile(String filePath) {
-        File taskFile = new File(filePath);
-        File parentDirectory = taskFile.getParentFile();
-
-        if (parentDirectory != null && !parentDirectory.exists()) {
-            boolean dirsCreated = parentDirectory.mkdirs();
-            if (dirsCreated) {
-                ui.showToUser("Directories created: " + parentDirectory.getAbsolutePath());
-            } else {
-                ui.showToUser("Failed to create directories!");
-            }
-        }
-        if (!taskFile.exists()) {
-            try {
-                if (taskFile.createNewFile()) {
-                    ui.showToUser("File created: " + taskFile.getAbsolutePath());
-                } else {
-                    ui.showToUser("Failed to create the file!");
-                }
-            } catch (IOException e) {
-                ui.showError("Error creating file: " + e.getMessage());
-            }
-        }
-    }
-
-    public static void parseFile(String filePath) {
-        try {
-            File taskFile = new File(filePath);
-            Scanner s = new Scanner(taskFile);
-            while (s.hasNext()) {
-                String[] taskArguments = s.nextLine().trim().split(" \\| ");
-                processTaskFromFile(taskArguments);
-            }
-        } catch (FileNotFoundException e) {
-            ui.showError("File not found");
-        } catch (IOException e) {
-            ui.showError("Error processing file");
-        }
-    }
-
-    private static void processTaskFromFile(String[] taskArguments) throws IOException {
-        switch (taskArguments[0]) {
-        case "T":
-            Todo newTodo = new Todo(taskArguments[2]);
-            tasks.add(newTodo);
-            if (taskArguments[1].equals("1")) {
-                newTodo.markAsDone();
-            }
-            break;
-        case "D":
-            Deadline newDeadline = new Deadline(taskArguments[2], taskArguments[3]);
-            tasks.add(newDeadline);
-            if (taskArguments[1].equals("1")) {
-                newDeadline.markAsDone();
-            }
-            break;
-        case "E":
-            Event newEvent = new Event(taskArguments[2], taskArguments[3], taskArguments[4]);
-            tasks.add(newEvent);
-            if (taskArguments[1].equals("1")) {
-                newEvent.markAsDone();
-            }
-            break;
-        default:
-            throw new IOException();
-        }
-    }
-
-    public static void saveFile(String filePath, ArrayList<Task> tasks) {
-        try {
-            FileWriter fw = new FileWriter(filePath);
-            for (Task t : tasks) {
-                fw.write(t.toSaveString() + System.lineSeparator());
-            }
-            fw.close();
-        } catch (IOException e) {
-            ui.showError("Error writing to file");
-        }
-
-    }
 
     public static void main(String[] args) {
         new Bond();
-        String filePath = "./data/Tasks.txt";
-        createFile(filePath);
-        parseFile(filePath);
+        try {
+            storage.load(tasks);
+        } catch (Storage.StorageOperationException e) {
+            ui.showError("Error loading file");
+        }
         ui.greet();
 
         String fullInputLine = ui.getUserCommand();
@@ -309,7 +238,11 @@ public class Bond {
             fullInputLine = ui.getUserCommand();
         }
 
-        saveFile(filePath, tasks);
+        try {
+            storage.save(tasks);
+        } catch (Storage.StorageOperationException e) {
+            ui.showError("Error saving file");
+        }
         ui.sayBye();
     }
 }
