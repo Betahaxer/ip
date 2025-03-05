@@ -42,25 +42,15 @@ import TaskTypes.Event;
 import TaskTypes.Task;
 import TaskTypes.Todo;
 
+import UI.Ui;
+
 public class Bond {
 
     private static ArrayList<Task> tasks = new ArrayList<>();
+    private static Ui ui;
 
-    public static void greet() {
-        System.out.print(GREETING);
-    }
-
-    public static void sayBye() {
-        System.out.println(GOODBYE);
-    }
-
-    public static void printList() {
-        System.out.println(TAB + LIST_HEADER);
-        for (Task t : tasks) {
-            System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
-            System.out.println(t);
-        }
-        System.out.println(TAB + String.format(LIST_FOOTER, tasks.size()));
+    public Bond() {
+        ui = new Ui();
     }
 
     public static void markTask(String input) {
@@ -76,17 +66,17 @@ public class Bond {
         } catch (IllegalArgumentException | NumberFormatException e) {
             switch (command) {
             case MARK:
-                System.out.println(TAB + MARK_USAGE);
+                ui.showError(TAB + MARK_USAGE);
                 break;
             case UNMARK:
-                System.out.println(TAB + UNMARK_USAGE);
+                ui.showError(TAB + UNMARK_USAGE);
                 break;
             default:
-                System.out.println(TAB + INVALID_MARK_COMMAND);
+                ui.showError(TAB + INVALID_MARK_COMMAND);
                 break;
             }
         } catch (IndexOutOfBoundsException e) {
-            System.out.println(TAB + INVALID_TASK_NUMBER);
+            ui.showError(TAB + INVALID_TASK_NUMBER);
         }
     }
 
@@ -97,13 +87,13 @@ public class Bond {
         switch (command) {
         case MARK:
             tasks.get(indexOfTask).markAsDone();
-            System.out.println(TAB + TASK_MARKED_DONE);
-            System.out.println(TAB + tasks.get(indexOfTask));
+            ui.showToUser(TAB + TASK_MARKED_DONE);
+            ui.showToUser(TAB + tasks.get(indexOfTask));
             break;
         case UNMARK:
             tasks.get(indexOfTask).markAsNotDone();
-            System.out.println(TAB + TASK_MARKED_UNDONE);
-            System.out.println(TAB + tasks.get(indexOfTask));
+            ui.showToUser(TAB + TASK_MARKED_UNDONE);
+            ui.showToUser(TAB + tasks.get(indexOfTask));
             break;
         default:
             throw new IllegalArgumentException();
@@ -119,9 +109,9 @@ public class Bond {
             }
             Todo newTodo = new Todo(input.substring(TODO.length() + 1));
             tasks.add(newTodo);
-            System.out.println(TAB + newTodo);
+            ui.showToUser(TAB + newTodo);
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + TODO_USAGE);
+            ui.showError(TAB + TODO_USAGE);
         }
     }
 
@@ -129,9 +119,9 @@ public class Bond {
         try {
             Deadline newDeadline = getDeadline(input);
             tasks.add(newDeadline);
-            System.out.println(TAB + newDeadline);
+            ui.showToUser(TAB + newDeadline);
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + DEADLINE_USAGE);
+            ui.showError(TAB + DEADLINE_USAGE);
         }
     }
 
@@ -158,9 +148,9 @@ public class Bond {
             }
             Event newEvent = getEvent(input);
             tasks.add(newEvent);
-            System.out.println(TAB + newEvent);
+            ui.showToUser(TAB + newEvent);
         } catch (Exceptions.IllegalArgumentException e) {
-            System.out.println(TAB + EVENT_USAGE);
+            ui.showError(TAB + EVENT_USAGE);
         }
     }
 
@@ -183,11 +173,11 @@ public class Bond {
                 throw new IllegalArgumentException();
             }
             tasks.remove(Integer.parseInt(splitInput[1]) - 1);
-            System.out.println(TAB + String.format(TASK_DELETED, splitInput[1]));
+            ui.showToUser(TAB + String.format(TASK_DELETED, splitInput[1]));
         } catch (IllegalArgumentException e) {
-            System.out.println(TAB + DELETE_USAGE);
+            ui.showError(TAB + DELETE_USAGE);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println(TAB + INVALID_TASK_NUMBER);
+            ui.showError(TAB + INVALID_TASK_NUMBER);
         }
     }
 
@@ -196,7 +186,7 @@ public class Bond {
             String command = input.split(" ", 2)[0];
             switch (command) {
             case LIST:
-                printList();
+                ui.printList(tasks);
                 break;
             case MARK:
             case UNMARK:
@@ -218,9 +208,9 @@ public class Bond {
                 throw new Exceptions.IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
-            System.out.println(TAB + INVALID_COMMAND);
+            ui.showError(TAB + INVALID_COMMAND);
         } finally {
-            System.out.print(COMMAND);
+            ui.showCommandArrow();
         }
     }
 
@@ -231,20 +221,20 @@ public class Bond {
         if (parentDirectory != null && !parentDirectory.exists()) {
             boolean dirsCreated = parentDirectory.mkdirs();
             if (dirsCreated) {
-                System.out.println("Directories created: " + parentDirectory.getAbsolutePath());
+                ui.showToUser("Directories created: " + parentDirectory.getAbsolutePath());
             } else {
-                System.out.println("Failed to create directories!");
+                ui.showToUser("Failed to create directories!");
             }
         }
         if (!taskFile.exists()) {
             try {
                 if (taskFile.createNewFile()) {
-                    System.out.println("File created: " + taskFile.getAbsolutePath());
+                    ui.showToUser("File created: " + taskFile.getAbsolutePath());
                 } else {
-                    System.out.println("Failed to create the file!");
+                    ui.showToUser("Failed to create the file!");
                 }
             } catch (IOException e) {
-                System.err.println("Error creating file: " + e.getMessage());
+                ui.showError("Error creating file: " + e.getMessage());
             }
         }
     }
@@ -258,9 +248,9 @@ public class Bond {
                 processTaskFromFile(taskArguments);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("File not found");
+            ui.showError("File not found");
         } catch (IOException e) {
-            System.err.println("Error processing file");
+            ui.showError("Error processing file");
         }
     }
 
@@ -300,26 +290,26 @@ public class Bond {
             }
             fw.close();
         } catch (IOException e) {
-            System.err.println("Error writing to file");
+            ui.showError("Error writing to file");
         }
 
     }
 
     public static void main(String[] args) {
+        new Bond();
         String filePath = "./data/Tasks.txt";
         createFile(filePath);
         parseFile(filePath);
-        greet();
+        ui.greet();
 
-        Scanner in = new Scanner(System.in);
-        String input = in.nextLine();
+        String fullInputLine = ui.getUserCommand();
 
-        while (!(input.equals(EXIT_APP))) {
-            executeCommand(input);
-            input = in.nextLine();
+        while (!(fullInputLine.equals(EXIT_APP))) {
+            executeCommand(fullInputLine);
+            fullInputLine = ui.getUserCommand();
         }
 
         saveFile(filePath, tasks);
-        sayBye();
+        ui.sayBye();
     }
 }
