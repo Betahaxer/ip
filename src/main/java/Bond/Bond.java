@@ -1,27 +1,12 @@
 package Bond;
 
-import static Constants.Commands.DEADLINE;
-import static Constants.Commands.DELETE;
 import static Constants.Commands.EVENT;
 import static Constants.Commands.EXIT_APP;
-import static Constants.Commands.LIST;
-import static Constants.Commands.MARK;
-import static Constants.Commands.TODO;
-import static Constants.Commands.UNMARK;
-import static Constants.Formatting.COMMAND;
 import static Constants.Formatting.TAB;
-import static Constants.Formatting.WHITE;
-import static Constants.Messages.BOND_ASCII;
 import static Constants.Messages.DEADLINE_USAGE;
 import static Constants.Messages.DELETE_USAGE;
 import static Constants.Messages.EVENT_USAGE;
-import static Constants.Messages.GOODBYE;
-import static Constants.Messages.GREETING;
-import static Constants.Messages.INVALID_COMMAND;
-import static Constants.Messages.INVALID_MARK_COMMAND;
 import static Constants.Messages.INVALID_TASK_NUMBER;
-import static Constants.Messages.LIST_FOOTER;
-import static Constants.Messages.LIST_HEADER;
 import static Constants.Messages.MARK_USAGE;
 import static Constants.Messages.TASK_DELETED;
 import static Constants.Messages.TASK_MARKED_DONE;
@@ -29,14 +14,11 @@ import static Constants.Messages.TASK_MARKED_UNDONE;
 import static Constants.Messages.TODO_USAGE;
 import static Constants.Messages.UNMARK_USAGE;
 
-import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
+import Commands.Command;
 import Exceptions.IllegalArgumentException;
+import Parser.Parser;
 import TaskTypes.Deadline;
 import TaskTypes.Event;
 import TaskTypes.Task;
@@ -60,61 +42,40 @@ public class Bond {
         }
     }
 
-    public static void markTask(String input) {
-        String[] splitInput = input.split(" ");
-        String command = splitInput[0];
+    public static void markTask(String taskNumber, boolean mark, ArrayList<Task> tasks) {
         try {
-            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
-            if (!isValidInput) {
-                throw new IllegalArgumentException();
-            }
-            findAndMarkTask(input, command);
+            int index = Integer.parseInt(taskNumber) - 1;
+            findAndMarkTask(index, mark, tasks);
 
         } catch (IllegalArgumentException | NumberFormatException e) {
-            switch (command) {
-            case MARK:
+            if (mark) {
                 ui.showError(TAB + MARK_USAGE);
-                break;
-            case UNMARK:
+            } else {
                 ui.showError(TAB + UNMARK_USAGE);
-                break;
-            default:
-                ui.showError(TAB + INVALID_MARK_COMMAND);
-                break;
             }
         } catch (IndexOutOfBoundsException e) {
             ui.showError(TAB + INVALID_TASK_NUMBER);
         }
     }
 
-    private static void findAndMarkTask(String input, String command) throws IllegalArgumentException, IndexOutOfBoundsException, NumberFormatException {
-        int taskNumber = Integer.parseInt(input.split(" ")[1]);
-        int indexOfTask = taskNumber - 1;
-
-        switch (command) {
-        case MARK:
-            tasks.get(indexOfTask).markAsDone();
+    private static void findAndMarkTask(int taskNumber, boolean mark, ArrayList<Task> tasks) throws IllegalArgumentException, IndexOutOfBoundsException, NumberFormatException {
+        if (mark) {
+            tasks.get(taskNumber).markAsDone();
             ui.showToUser(TAB + TASK_MARKED_DONE);
-            ui.showToUser(TAB + tasks.get(indexOfTask));
-            break;
-        case UNMARK:
-            tasks.get(indexOfTask).markAsNotDone();
+            ui.showToUser(TAB + tasks.get(taskNumber));
+        } else {
+            tasks.get(taskNumber).markAsNotDone();
             ui.showToUser(TAB + TASK_MARKED_UNDONE);
-            ui.showToUser(TAB + tasks.get(indexOfTask));
-            break;
-        default:
-            throw new IllegalArgumentException();
+            ui.showToUser(TAB + tasks.get(taskNumber));
         }
     }
 
-    public static void addTodo(String input) {
+    public static void addTodo(String arguments) {
         try {
-            String[] splitInput = input.split(" ", 2);
-            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
-            if (!isValidInput) {
+            if (arguments.isEmpty()) {
                 throw new Exceptions.IllegalArgumentException();
             }
-            Todo newTodo = new Todo(input.substring(TODO.length() + 1));
+            Todo newTodo = new Todo(arguments);
             tasks.add(newTodo);
             ui.showToUser(TAB + newTodo);
         } catch (Exceptions.IllegalArgumentException e) {
@@ -122,9 +83,9 @@ public class Bond {
         }
     }
 
-    public static void addDeadline(String input) {
+    public static void addDeadline(String arguments) {
         try {
-            Deadline newDeadline = getDeadline(input);
+            Deadline newDeadline = getDeadline(arguments);
             tasks.add(newDeadline);
             ui.showToUser(TAB + newDeadline);
         } catch (Exceptions.IllegalArgumentException e) {
@@ -139,7 +100,7 @@ public class Bond {
             throw new IllegalArgumentException();
         }
 
-        String deadlineDescription = splitInput[0].substring(DEADLINE.length() + 1).trim();
+        String deadlineDescription = splitInput[0].trim();
         String byDescription = splitInput[1].trim();
         if (deadlineDescription.isEmpty() || byDescription.isEmpty()) {
             throw new IllegalArgumentException();
@@ -161,63 +122,26 @@ public class Bond {
         }
     }
 
-    private static Event getEvent(String input) throws IllegalArgumentException {
-        String[] splitInput = input.split("/to", 2);
-        String eventDescription = splitInput[0].substring(EVENT.length() + 1, splitInput[0].indexOf("/from")).trim();
-        String fromDescription = splitInput[0].substring(splitInput[0].indexOf("/from") + "/from".length()).trim();
-        String toDescription = splitInput[1].trim();
+    private static Event getEvent(String arguments) throws IllegalArgumentException {
+        String[] splitByTo = arguments.split("/to", 2);
+        String[] splitByFrom = splitByTo[0].split("/from", 2);
+        String eventDescription = splitByFrom[0].trim();
+        String fromDescription = splitByFrom[1].trim();
+        String toDescription = splitByTo[1].trim();
         if (eventDescription.isEmpty() || fromDescription.isEmpty() || toDescription.isEmpty()) {
             throw new IllegalArgumentException();
         }
         return new Event(eventDescription, fromDescription, toDescription);
     }
 
-    public static void deleteTask(String input) {
+    public static void deleteTask(String taskNumber) {
         try {
-            String[] splitInput = input.split(" ", 2);
-            boolean isValidInput = splitInput.length == 2 && !splitInput[1].trim().isEmpty();
-            if (!isValidInput) {
-                throw new IllegalArgumentException();
-            }
-            tasks.remove(Integer.parseInt(splitInput[1]) - 1);
-            ui.showToUser(TAB + String.format(TASK_DELETED, splitInput[1]));
+            tasks.remove(Integer.parseInt(taskNumber) - 1);
+            ui.showToUser(TAB + String.format(TASK_DELETED, taskNumber));
         } catch (IllegalArgumentException e) {
             ui.showError(TAB + DELETE_USAGE);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
             ui.showError(TAB + INVALID_TASK_NUMBER);
-        }
-    }
-
-    public static void executeCommand(String input) {
-        try {
-            String command = input.split(" ", 2)[0];
-            switch (command) {
-            case LIST:
-                ui.printList(tasks);
-                break;
-            case MARK:
-            case UNMARK:
-                markTask(input);
-                break;
-            case TODO:
-                addTodo(input);
-                break;
-            case DEADLINE:
-                addDeadline(input);
-                break;
-            case EVENT:
-                addEvent(input);
-                break;
-            case DELETE:
-                deleteTask(input);
-                break;
-            default:
-                throw new Exceptions.IllegalArgumentException();
-            }
-        } catch (IllegalArgumentException e) {
-            ui.showError(TAB + INVALID_COMMAND);
-        } finally {
-            ui.showCommandArrow();
         }
     }
 
@@ -234,7 +158,8 @@ public class Bond {
         String fullInputLine = ui.getUserCommand();
 
         while (!(fullInputLine.equals(EXIT_APP))) {
-            executeCommand(fullInputLine);
+            Command c = Parser.parseInput(fullInputLine);
+            c.executeCommand(tasks);
             fullInputLine = ui.getUserCommand();
         }
 

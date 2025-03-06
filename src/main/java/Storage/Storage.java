@@ -17,7 +17,7 @@ import TaskTypes.Todo;
 public class Storage {
     private final String path;
 
-    public static final String DEFAULT_FILE_PATH = "./data_test/Tasks.txt";
+    public static final String DEFAULT_FILE_PATH = "./data/Tasks.txt";
 
     public Storage() throws InvalidStorageFilePathException, StorageOperationException {
         this(DEFAULT_FILE_PATH);

@@ -17,17 +17,7 @@ import java.util.Scanner;
 import TaskTypes.Task;
 
 public class Ui {
-    private final Scanner in;
-    private final PrintStream out;
-
-    public Ui() {
-        this(System.in, System.out);
-    }
-
-    public Ui(InputStream in, PrintStream out) {
-        this.in = new Scanner(in);
-        this.out = out;
-    }
+    private Scanner in = new Scanner(System.in);
 
     public String getUserCommand() {
         return in.nextLine();
@@ -35,32 +25,32 @@ public class Ui {
 
 
     public void greet() {
-        out.print(GREETING);
+        System.out.print(GREETING);
     }
 
     public void sayBye() {
-        out.println(GOODBYE);
+        System.out.println(GOODBYE);
     }
 
-    public void printList(ArrayList<Task> tasks) {
-        out.println(TAB + LIST_HEADER);
+    public static void printList(ArrayList<Task> tasks) {
+        System.out.println(TAB + LIST_HEADER);
         for (Task t : tasks) {
-            out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
-            out.println(t);
+            System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
+            System.out.println(t);
         }
         System.out.println(TAB + String.format(LIST_FOOTER, tasks.size()));
     }
 
     public void showError(String message) {
-        out.println(message);
+        System.out.println(message);
     }
 
     public void showToUser(String message) {
-        out.println(message);
+        System.out.println(message);
     }
 
     public void showCommandArrow() {
-        out.print(COMMAND);
+        System.out.print(COMMAND);
     }
 
 }
