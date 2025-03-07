@@ -1,11 +1,16 @@
 package Constants;
 
+/**
+ * The {@code Formatting} class contains a collection of constants used for formatting
+ * and styling text output in the console. These constants are primarily used to apply
+ * colors and indentation to enhance the user interface experience.
+ */
 public class Formatting {
-    //colours for text output
+    // Colors for text output
     public static final String GREEN = "\u001B[32m";
     public static final String WHITE = "\033[97m";
 
-    //formatting related
+    // Formatting related
     public static final String TAB = WHITE + "    ";
     public static final String COMMAND = GREEN + "> ";
 }

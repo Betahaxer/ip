@@ -3,7 +3,6 @@ package Storage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,10 +13,26 @@ import TaskTypes.Task;
 import TaskTypes.TaskList;
 import TaskTypes.Todo;
 
+/**
+ * The Storage class is responsible for loading and saving task data to and from
+ * a file. It provides functionality to read tasks from a file, process them,
+ * and save the task data back to a file. The class works with various types of
+ * tasks including {@link Todo}, {@link Deadline}, and {@link Event}.
+ * <p>
+ * The default file path for storing tasks is {@link #DEFAULT_FILE_PATH}.
+ */
 public class Storage {
 
     public static final String DEFAULT_FILE_PATH = "./data/Tasks.txt";
 
+    /**
+     * Loads tasks from the storage file and returns them as an ArrayList of
+     * Task objects. This method reads the task data from the file, processes
+     * each line, and creates corresponding task objects (Todo, Deadline, Event).
+     *
+     * @return an ArrayList of Task objects loaded from the file
+     * @throws StorageOperationException if an error occurs during the loading process
+     */
     public static ArrayList<Task> load() throws StorageOperationException {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
@@ -33,6 +48,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves the current list of tasks to the storage file. It retrieves the
+     * list of tasks from {@link TaskList#getTasks()} and writes each task's
+     * saved string representation to the file.
+     *
+     * @throws StorageOperationException if an error occurs during the saving process
+     */
     public static void save() throws StorageOperationException {
         ArrayList<Task> tasks = TaskList.getTasks();
         try {
@@ -46,24 +68,14 @@ public class Storage {
         }
     }
 
-    private void createDirectoriesIfNeeded(File parentDirectory) {
-        if (parentDirectory != null && !parentDirectory.exists()) {
-            boolean dirsCreated = parentDirectory.mkdirs();
-            if (!dirsCreated) {
-                System.err.println("Failed to create directories: " + parentDirectory.getAbsolutePath());
-            }
-        }
-    }
-
-    private void createFileIfNeeded(File taskFile) throws IOException {
-        if (!taskFile.exists()) {
-            boolean fileCreated = taskFile.createNewFile();
-            if (!fileCreated) {
-                throw new IOException("Failed to create the file: " + taskFile.getAbsolutePath());
-            }
-        }
-    }
-
+    /**
+     * Processes a line of task data from the file and adds the corresponding task
+     * object to the list of tasks.
+     *
+     * @param taskArguments the arguments representing a task, split from a line in the file
+     * @param tasks         the list of tasks to add the new task to
+     * @throws IOException if an error occurs while processing the task
+     */
     private static void processTaskFromFile(String[] taskArguments, ArrayList<Task> tasks) throws IOException {
         switch (taskArguments[0]) {
         case "T":
@@ -91,5 +103,4 @@ public class Storage {
             throw new IOException();
         }
     }
-
 }

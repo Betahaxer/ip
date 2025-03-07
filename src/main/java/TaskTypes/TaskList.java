@@ -19,6 +19,11 @@ import Storage.Storage;
 import Exceptions.StorageOperationException;
 import UI.Ui;
 
+/**
+ * A class representing a task list, where tasks can be added, marked as done or undone,
+ * deleted, and retrieved. The tasks are stored in an ArrayList, and the data is loaded
+ * from storage at class initialization.
+ */
 public class TaskList {
     public static ArrayList<Task> tasks;
 
@@ -30,10 +35,21 @@ public class TaskList {
         }
     }
 
+    /**
+     * Retrieves the array list of tasks.
+     *
+     * @return the array list of tasks
+     */
     public static ArrayList<Task> getTasks() {
         return tasks;
     }
 
+    /**
+     * Marks a task as either done or undone based on the specified task number and mark status.
+     *
+     * @param taskNumber the number of the task to mark
+     * @param mark       true to mark the task as done, false to mark it as undone
+     */
     public static void markTask(String taskNumber, boolean mark) {
         try {
             if (taskNumber.isEmpty()) {
@@ -60,6 +76,11 @@ public class TaskList {
         }
     }
 
+    /**
+     * Adds a Todo task to the task list.
+     *
+     * @param todo the Todo task object to add
+     */
     public static void addTodo(Todo todo) {
         try {
             if (todo.getDescription().isEmpty()) {
@@ -72,6 +93,11 @@ public class TaskList {
         }
     }
 
+    /**
+     * Adds a Deadline task to the task list.
+     *
+     * @param arguments the string containing the deadline description and deadline date, marked by "/by"
+     */
     public static void addDeadline(String arguments) {
         try {
             String[] splitInput = arguments.split("/by", 2);
@@ -92,6 +118,11 @@ public class TaskList {
         }
     }
 
+    /**
+     * Adds an Event task to the task list.
+     *
+     * @param arguments the string containing the event description and time range, marked by "/from" and "to"
+     */
     public static void addEvent(String arguments) {
         try {
             boolean containsAllArguments = arguments.contains("/from") && arguments.contains("/to");
@@ -106,6 +137,13 @@ public class TaskList {
         }
     }
 
+    /**
+     * Parses the event arguments and creates an Event object.
+     *
+     * @param arguments the string containing the event description and time range, marked by "/from" and "to"
+     * @return the created Event object
+     * @throws IllegalArgumentException if the event arguments are invalid
+     */
     private static Event getEvent(String arguments) throws IllegalArgumentException {
         String[] splitByTo = arguments.split("/to", 2);
         String[] splitByFrom = splitByTo[0].split("/from", 2);
@@ -118,6 +156,11 @@ public class TaskList {
         return new Event(eventDescription, fromDescription, toDescription);
     }
 
+    /**
+     * Deletes a task from the task list by its task number.
+     *
+     * @param arguments the task number to delete
+     */
     public static void deleteTask(String arguments) {
         try {
             tasks.remove(Integer.parseInt(arguments) - 1);

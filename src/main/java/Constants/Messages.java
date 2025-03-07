@@ -4,6 +4,15 @@ import static Constants.Formatting.COMMAND;
 import static Constants.Formatting.GREEN;
 import static Constants.Formatting.TAB;
 
+/**
+ * This class contains constant message strings used for displaying various outputs in the application.
+ * These messages include greetings, task list headers/footers, usage instructions for various commands,
+ * and ASCII art for the fictional dog character, Bond.
+ * <p>
+ * The messages are used throughout the application to provide feedback to the user, such as confirming
+ * actions (e.g., marking tasks, deleting tasks), showing error messages (e.g., invalid commands, task numbers),
+ * and greeting or saying goodbye to the user.
+ */
 public class Messages {
     public static final String GREETING = TAB + "Hello! I'm Bond, a dog that can predict the future.\n" + TAB + "What can I do for you?\n" + GREEN + COMMAND;
     public static final String GOODBYE = TAB + "Woof. Hope to see you again soon!";
@@ -23,8 +32,8 @@ public class Messages {
     public static final String INVALID_COMMAND = "Uh-oh... That command doesn't smell right! Try one of these: todo, deadline, event, mark, unmark, list, delete.";
     public static final String BOND_ASCII =
             "⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" +
-                    "⠀⠀⠀⠀⠀⠾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣶⣄⠀⠀⠀⠀\n" +
-                    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠶⢶⣶⣦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀\n" +
+                    "⠀⠀⠀⠀⠀⠾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣶⣄⠀⠀⠀⠀\n" +
+                    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠶⢶⣶⣦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀\n" +
                     "⠀⠀⠀⠀⠀⠀⠀⠀⡠⠒⠁⠀⠀⠀⠀⠹⣷⣾⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" +
                     "⠀⠀⠀⠀⠀⠀⢀⠎⠀⠀⠀⠀⠀⠀⠀⠀⠘⠻⠿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" +
                     "⠀⠀⠀⠀⠀⢠⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" +

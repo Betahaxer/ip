@@ -17,7 +17,28 @@ import Commands.CommandMark;
 import Commands.CommandTodo;
 import Exceptions.IllegalArgumentException;
 
+/**
+ * The Parser class is responsible for parsing user input and converting it
+ * into the corresponding {@link Command} objects. It processes the input to
+ * identify the command and its arguments, then returns the appropriate command
+ * object that can be executed. The class supports multiple commands such as
+ * "LIST", "MARK", "UNMARK", "TODO", "DEADLINE", "EVENT", "DELETE" and "FIND".
+ * <p>
+ * The class utilizes a switch statement to handle each command and returns
+ * the corresponding Command object. If an invalid command is encountered,
+ * an {@link IllegalArgumentException} is thrown.
+ */
 public class Parser {
+
+    /**
+     * Parses the user input and returns the corresponding {@link Command} object.
+     * The input is split into a command and its arguments, which are used to
+     * instantiate the appropriate Command object.
+     *
+     * @param input the user input string
+     * @return a Command object representing the parsed command
+     * @throws IllegalArgumentException if the command is unrecognized or the arguments are invalid
+     */
     public static Command parseInput(String input) throws IllegalArgumentException {
         String[] inputList = input.split(" ", 2);
         String command = inputList[0];
@@ -31,6 +52,5 @@ public class Parser {
             case DELETE -> new CommandDelete(arguments);
             default -> throw new IllegalArgumentException();
         };
-
     }
 }
