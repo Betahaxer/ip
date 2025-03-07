@@ -3,6 +3,7 @@ package Parser;
 import static Constants.Commands.DEADLINE;
 import static Constants.Commands.DELETE;
 import static Constants.Commands.EVENT;
+import static Constants.Commands.FIND;
 import static Constants.Commands.LIST;
 import static Constants.Commands.MARK;
 import static Constants.Commands.TODO;
@@ -12,6 +13,7 @@ import Commands.Command;
 import Commands.CommandDeadline;
 import Commands.CommandDelete;
 import Commands.CommandEvent;
+import Commands.CommandFind;
 import Commands.CommandList;
 import Commands.CommandMark;
 import Commands.CommandTodo;
@@ -29,6 +31,7 @@ public class Parser {
             case DEADLINE -> new CommandDeadline(arguments);
             case EVENT -> new CommandEvent(arguments);
             case DELETE -> new CommandDelete(arguments);
+            case FIND -> new CommandFind(arguments);
             default -> throw new IllegalArgumentException();
         };
 
