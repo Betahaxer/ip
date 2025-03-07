@@ -1,83 +1,48 @@
 package Storage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Exceptions.StorageOperationException;
 import TaskTypes.Deadline;
 import TaskTypes.Event;
 import TaskTypes.Task;
+import TaskTypes.TaskList;
 import TaskTypes.Todo;
 
 public class Storage {
-    private final String path;
 
     public static final String DEFAULT_FILE_PATH = "./data/Tasks.txt";
 
-    public Storage() throws InvalidStorageFilePathException, StorageOperationException {
-        this(DEFAULT_FILE_PATH);
-    }
-
-    public Storage(String filePath) throws InvalidStorageFilePathException, StorageOperationException {
-        Path path = Paths.get(filePath);
-        if (!isValidPath(path)) {
-            throw new InvalidStorageFilePathException("Storage file should end with '.txt'");
-        }
-        this.path = filePath;
+    public static ArrayList<Task> load() throws StorageOperationException {
+        ArrayList<Task> tasks = new ArrayList<>();
         try {
-            File taskFile = new File(this.path);
-            File parentDirectory = taskFile.getParentFile();
-            createDirectoriesIfNeeded(parentDirectory);
-            createFileIfNeeded(taskFile);
-        } catch (IOException ioe) {
-            throw new StorageOperationException("Error loading file: " + path);
-        }
-    }
-
-    private static boolean isValidPath(Path filePath) {
-        return filePath.toString().endsWith(".txt");
-    }
-
-    public static class InvalidStorageFilePathException extends Exception {
-        public InvalidStorageFilePathException(String message) {
-            super(message);
-        }
-    }
-
-    public static class StorageOperationException extends Exception {
-        public StorageOperationException(String message) {
-            super(message);
-        }
-    }
-
-    public void load(ArrayList<Task> tasks) throws StorageOperationException {
-        File taskFile = new File(path);
-
-        try {
+            File taskFile = new File(DEFAULT_FILE_PATH);
             Scanner scanner = new Scanner(taskFile);
             while (scanner.hasNext()) {
                 String[] taskArguments = scanner.nextLine().trim().split(" \\| ");
                 processTaskFromFile(taskArguments, tasks);
             }
+            return tasks;
         } catch (IOException ioe) {
-            throw new StorageOperationException("Error loading file: " + path);
+            throw new StorageOperationException("Error loading file: " + DEFAULT_FILE_PATH);
         }
     }
 
-    public void save(ArrayList<Task> tasks) throws StorageOperationException {
+    public static void save() throws StorageOperationException {
+        ArrayList<Task> tasks = TaskList.getTasks();
         try {
-            FileWriter fw = new FileWriter(path);
+            FileWriter fw = new FileWriter(DEFAULT_FILE_PATH);
             for (Task t : tasks) {
                 fw.write(t.toSaveString() + System.lineSeparator());
             }
             fw.close();
         } catch (IOException e) {
-            throw new StorageOperationException("Error writing to file: " + path);
+            throw new StorageOperationException("Error writing to file: " + DEFAULT_FILE_PATH);
         }
     }
 
@@ -99,7 +64,7 @@ public class Storage {
         }
     }
 
-    private void processTaskFromFile(String[] taskArguments, ArrayList<Task> tasks) throws IOException {
+    private static void processTaskFromFile(String[] taskArguments, ArrayList<Task> tasks) throws IOException {
         switch (taskArguments[0]) {
         case "T":
             Todo newTodo = new Todo(taskArguments[2]);

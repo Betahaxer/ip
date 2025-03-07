@@ -1,10 +1,6 @@
 package Commands;
 
-import static Bond.Bond.addEvent;
-
-import java.util.ArrayList;
-
-import TaskTypes.Task;
+import static TaskTypes.TaskList.addEvent;
 
 public class CommandEvent extends Command {
     private final String arguments;
@@ -13,7 +9,7 @@ public class CommandEvent extends Command {
         this.arguments = arguments;
     }
 
-    public void executeCommand(ArrayList<Task> tasks) {
+    public void executeCommand() {
         addEvent(this.arguments);
     }
 }

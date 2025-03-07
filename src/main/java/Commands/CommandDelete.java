@@ -1,10 +1,6 @@
 package Commands;
 
-import static Bond.Bond.deleteTask;
-
-import java.util.ArrayList;
-
-import TaskTypes.Task;
+import static TaskTypes.TaskList.deleteTask;
 
 public class CommandDelete extends Command {
     private final String arguments;
@@ -13,7 +9,7 @@ public class CommandDelete extends Command {
         this.arguments = arguments;
     }
 
-    public void executeCommand(ArrayList<Task> tasks) {
+    public void executeCommand() {
         deleteTask(this.arguments);
     }
 

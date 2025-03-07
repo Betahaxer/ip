@@ -1,10 +1,9 @@
 package Commands;
 
-import static Bond.Bond.addDeadline;
+import static TaskTypes.TaskList.addDeadline;
 
-import java.util.ArrayList;
-
-import TaskTypes.Task;
+import Exceptions.IllegalArgumentException;
+import TaskTypes.Deadline;
 
 public class CommandDeadline extends Command {
     private final String arguments;
@@ -13,7 +12,7 @@ public class CommandDeadline extends Command {
         this.arguments = arguments;
     }
 
-    public void executeCommand(ArrayList<Task> task) {
-        addDeadline(this.arguments);
+    public void executeCommand() {
+        addDeadline(arguments);
     }
 }

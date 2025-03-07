@@ -1,19 +1,17 @@
 package Commands;
 
-import static Bond.Bond.addTodo;
+import static TaskTypes.TaskList.addTodo;
 
-import java.util.ArrayList;
-
-import TaskTypes.Task;
+import TaskTypes.Todo;
 
 public class CommandTodo extends Command {
-    private final String arguments;
+    private final Todo todo;
 
     public CommandTodo(String arguments) {
-        this.arguments = arguments;
+        this.todo = new Todo(arguments);
     }
 
-    public void executeCommand(ArrayList<Task> tasks) {
-        addTodo(this.arguments);
+    public void executeCommand() {
+        addTodo(this.todo);
     }
 }
