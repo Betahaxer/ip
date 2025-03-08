@@ -1,3 +1,10 @@
+---
+layout: default
+title: Home
+---
+
+# User Guide for **Bond's Mission Tracker**
+
 Welcome to **Bond's Mission Tracker**, your new partner in staying ahead of the game! Just like Bond himself, this tool
 will help you complete your missions efficiently and precisely, whether you're tracking deadlines or managing those
 pesky to-dos. Stay organized, stay sharp, and always be on top of your assignments.
