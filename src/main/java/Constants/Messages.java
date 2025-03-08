@@ -1,9 +1,5 @@
 package Constants;
 
-import static Constants.Formatting.COMMAND;
-import static Constants.Formatting.GREEN;
-import static Constants.Formatting.TAB;
-
 /**
  * This class contains constant message strings used for displaying various outputs in the application.
  * These messages include greetings, task list headers/footers, usage instructions for various commands,

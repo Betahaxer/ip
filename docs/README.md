@@ -1,8 +1,3 @@
----
-layout: default
-title: Home
----
-
 # User Guide for **Bond's Mission Tracker**
 
 Welcome to **Bond's Mission Tracker**, your new partner in staying ahead of the game! Just like Bond himself, this tool

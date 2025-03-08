@@ -1,7 +1,6 @@
 package Bond;
 
 import static Constants.Commands.EXIT_APP;
-import static Constants.Formatting.TAB;
 import static Constants.Messages.INVALID_COMMAND;
 
 import Commands.Command;

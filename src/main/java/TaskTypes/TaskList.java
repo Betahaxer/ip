@@ -1,7 +1,5 @@
 package TaskTypes;
 
-import static Constants.Formatting.TAB;
-import static Constants.Formatting.WHITE;
 import static Constants.Messages.DEADLINE_USAGE;
 import static Constants.Messages.DELETE_USAGE;
 import static Constants.Messages.EVENT_USAGE;
@@ -20,7 +18,6 @@ import static Constants.Messages.UNMARK_USAGE;
 import java.util.ArrayList;
 
 import Exceptions.IllegalArgumentException;
-import Parser.Parser;
 import Storage.Storage;
 import Exceptions.StorageOperationException;
 import UI.Ui;
@@ -180,6 +177,13 @@ public class TaskList {
         }
     }
 
+    /**
+     * Searches for tasks that contain the given search term in their description
+     * and displays the matching tasks. If no tasks are found, a message is shown
+     * indicating that no tasks match the search term.
+     *
+     * @param arguments the search term used to find matching tasks
+     */
     public static void findTasks(String arguments) {
         try {
             String searchTerm = arguments.trim();
