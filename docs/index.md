@@ -1,6 +1,5 @@
 ---
 layout: default
-title: Home
 ---
 
 # User Guide for **Bond's Mission Tracker**
