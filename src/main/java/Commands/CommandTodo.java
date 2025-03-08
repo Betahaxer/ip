@@ -3,7 +3,6 @@ package Commands;
 import static TaskTypes.TaskList.addTodo;
 
 import TaskTypes.TaskList;
-import TaskTypes.Todo;
 
 /**
  * CommandTodo is a concrete subclass of the {@link Command} class that represents
@@ -15,7 +14,7 @@ import TaskTypes.Todo;
  * categorized as a "Todo" to the task list.
  */
 public class CommandTodo extends Command {
-    private final Todo todo;
+    private final String arguments;
 
     /**
      * Constructs a CommandTodo object with the specified arguments to create a new Todo task.
@@ -24,14 +23,14 @@ public class CommandTodo extends Command {
      * @param arguments the description of the new Todo task
      */
     public CommandTodo(String arguments) {
-        this.todo = new Todo(arguments);
+        this.arguments = arguments;
     }
 
     /**
      * Executes the command to add the new Todo task to the task list.
-     * This method calls {@link TaskList#addTodo(Todo)} to add the task to the list of tasks.
+     * This method calls {@link TaskList#addTodo(String)} to add the task to the list of tasks.
      */
     public void executeCommand() {
-        addTodo(this.todo);
+        addTodo(this.arguments);
     }
 }

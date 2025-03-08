@@ -35,18 +35,34 @@ public class Storage {
      */
     public static ArrayList<Task> load() throws StorageOperationException {
         ArrayList<Task> tasks = new ArrayList<>();
+
         try {
+            File taskDirectory = new File("./data");
             File taskFile = new File(DEFAULT_FILE_PATH);
+            createDirectoryAndFile(taskDirectory, taskFile);
+
             Scanner scanner = new Scanner(taskFile);
             while (scanner.hasNext()) {
                 String[] taskArguments = scanner.nextLine().trim().split(" \\| ");
                 processTaskFromFile(taskArguments, tasks);
             }
             return tasks;
+
         } catch (IOException ioe) {
             throw new StorageOperationException("Error loading file: " + DEFAULT_FILE_PATH);
         }
     }
+
+    private static void createDirectoryAndFile(File taskDirectory, File taskFile) throws IOException {
+        if (!taskDirectory.exists()) {
+            taskDirectory.mkdirs();
+        }
+
+        if (!taskFile.exists()) {
+            taskFile.createNewFile();
+        }
+    }
+
 
     /**
      * Saves the current list of tasks to the storage file. It retrieves the

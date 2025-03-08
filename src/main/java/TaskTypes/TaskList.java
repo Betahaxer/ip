@@ -84,15 +84,16 @@ public class TaskList {
     /**
      * Adds a Todo task to the task list.
      *
-     * @param todo the Todo task object to add
+     * @param arguments the string containing the todo description
      */
-    public static void addTodo(Todo todo) {
+    public static void addTodo(String arguments) {
         try {
-            if (todo.getDescription().isEmpty()) {
+            if (arguments.trim().isEmpty()) {
                 throw new Exceptions.IllegalArgumentException();
             }
-            tasks.add(todo);
-            Ui.showToUser(todo.toString());
+            Todo newTodo = new Todo(arguments);
+            tasks.add(newTodo);
+            Ui.showToUser(newTodo.toString());
         } catch (Exceptions.IllegalArgumentException e) {
             Ui.showError(TODO_USAGE);
         }
