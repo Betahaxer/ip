@@ -9,7 +9,7 @@ pesky to-dos. Stay organized, stay sharp, and always be on top of your assignmen
 ## Quick Start
 
 1. Ensure you have the Java 17 or above installed in your computer.
-2. Download the latest version of Bond from [here](https://pages.github.com/).
+2. Download the latest version of Bond from [here](https://github.com/Betahaxer/ip).
 3. Navigate to the folder where you saved the application and run the following command:\
    `java -jar bond.jar`
 4. Bond will greet you with a welcome message upon starting. Welcome to Bond!
@@ -244,18 +244,17 @@ Woof. Hope to see you again soon!
 
 ## Command Summary
 
-| Command            | Format                                                      |
-|--------------------|-------------------------------------------------------------|
-| **Add Todo**       | `todo DESCRIPTION`                                          |
-| **Add Deadline**   | `deadline DESCRIPTION /by DATE_TIME`                        |
-| **Add Event**      | `event DESCRIPTION /from START_DATE_TIME /to END_DATE_TIME` |
-| **List Missions**  | `list`                                                      |
-| **Find Missions**  | `find KEYWORD`                                              |
-|
-| **Mark Mission**   | `mark INDEX`                                                |
-| **Unmark Mission** | `unmark INDEX`                                              |
-| **Delete Mission** | `delete INDEX`                                              |
-| **Exit**           | `bye`                                                       |
+| Command      | Format                                                      |
+|--------------|-------------------------------------------------------------|
+| **Todo**     | `todo DESCRIPTION`                                          |
+| **Deadline** | `deadline DESCRIPTION /by DATE_TIME`                        |
+| **Event**    | `event DESCRIPTION /from START_DATE_TIME /to END_DATE_TIME` |
+| **List**     | `list`                                                      |
+| **Find**     | `find KEYWORD`                                              |    
+| **Mark**     | `mark INDEX`                                                |
+| **Unmark**   | `unmark INDEX`                                              |
+| **Delete**   | `delete INDEX`                                              |
+| **Exit**     | `bye`                                                       |
 
 ---
 
