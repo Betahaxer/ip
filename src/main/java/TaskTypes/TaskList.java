@@ -1,11 +1,16 @@
 package TaskTypes;
 
 import static Constants.Formatting.TAB;
+import static Constants.Formatting.WHITE;
 import static Constants.Messages.DEADLINE_USAGE;
 import static Constants.Messages.DELETE_USAGE;
 import static Constants.Messages.EVENT_USAGE;
+import static Constants.Messages.FIND_USAGE;
+import static Constants.Messages.INVALID_MARK_COMMAND;
 import static Constants.Messages.INVALID_TASK_NUMBER;
 import static Constants.Messages.MARK_USAGE;
+import static Constants.Messages.NO_TASKS_FOUND;
+import static Constants.Messages.SEARCH_HEADER;
 import static Constants.Messages.TASK_DELETED;
 import static Constants.Messages.TASK_MARKED_DONE;
 import static Constants.Messages.TASK_MARKED_UNDONE;
@@ -15,6 +20,7 @@ import static Constants.Messages.UNMARK_USAGE;
 import java.util.ArrayList;
 
 import Exceptions.IllegalArgumentException;
+import Parser.Parser;
 import Storage.Storage;
 import Exceptions.StorageOperationException;
 import UI.Ui;
@@ -42,21 +48,23 @@ public class TaskList {
             int index = Integer.parseInt(taskNumber) - 1;
             if (mark) {
                 tasks.get(index).markAsDone();
-                Ui.showToUser(TAB + TASK_MARKED_DONE);
-                Ui.showToUser(TAB + tasks.get(index));
+                Ui.showToUser(TASK_MARKED_DONE);
+                Ui.showToUser(tasks.get(index).toString());
             } else {
                 tasks.get(index).markAsNotDone();
-                Ui.showToUser(TAB + TASK_MARKED_UNDONE);
-                Ui.showToUser(TAB + tasks.get(index));
+                Ui.showToUser(TASK_MARKED_UNDONE);
+                Ui.showToUser(tasks.get(index).toString());
             }
-        } catch (NumberFormatException | IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             if (mark) {
-                Ui.showError(TAB + MARK_USAGE);
+                Ui.showError(MARK_USAGE);
             } else {
-                Ui.showError(TAB + UNMARK_USAGE);
+                Ui.showError(UNMARK_USAGE);
             }
         } catch (IndexOutOfBoundsException e) {
-            Ui.showError(TAB + INVALID_TASK_NUMBER);
+            Ui.showError(INVALID_TASK_NUMBER);
+        } catch (NumberFormatException e) {
+            Ui.showError(INVALID_MARK_COMMAND);
         }
     }
 
@@ -66,9 +74,9 @@ public class TaskList {
                 throw new Exceptions.IllegalArgumentException();
             }
             tasks.add(todo);
-            Ui.showToUser(TAB + todo);
+            Ui.showToUser(todo.toString());
         } catch (Exceptions.IllegalArgumentException e) {
-            Ui.showError(TAB + TODO_USAGE);
+            Ui.showError(TODO_USAGE);
         }
     }
 
@@ -86,9 +94,9 @@ public class TaskList {
             }
             Deadline deadline = new Deadline(deadlineDescription, byDescription);
             tasks.add(deadline);
-            Ui.showToUser(TAB + deadline);
+            Ui.showToUser(deadline.toString());
         } catch (Exceptions.IllegalArgumentException e) {
-            Ui.showError(TAB + DEADLINE_USAGE);
+            Ui.showError(DEADLINE_USAGE);
         }
     }
 
@@ -100,9 +108,9 @@ public class TaskList {
             }
             Event newEvent = getEvent(arguments);
             tasks.add(newEvent);
-            Ui.showToUser(TAB + newEvent);
+            Ui.showToUser(newEvent.toString());
         } catch (Exceptions.IllegalArgumentException e) {
-            Ui.showError(TAB + EVENT_USAGE);
+            Ui.showError(EVENT_USAGE);
         }
     }
 
@@ -121,11 +129,38 @@ public class TaskList {
     public static void deleteTask(String arguments) {
         try {
             tasks.remove(Integer.parseInt(arguments) - 1);
-            Ui.showToUser(TAB + String.format(TASK_DELETED, arguments));
+            Ui.showToUser(String.format(TASK_DELETED, arguments));
         } catch (IllegalArgumentException e) {
-            Ui.showError(TAB + DELETE_USAGE);
+            Ui.showError(DELETE_USAGE);
         } catch (IndexOutOfBoundsException | NumberFormatException e) {
-            Ui.showError(TAB + INVALID_TASK_NUMBER);
+            Ui.showError(INVALID_TASK_NUMBER);
+        }
+    }
+
+    public static void findTasks(String arguments) {
+        try {
+            String searchTerm = arguments.trim();
+            if (searchTerm.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            ArrayList<Task> tasksFound = new ArrayList<>();
+
+            for (Task t : tasks) {
+                if (t.getDescription().contains(arguments.trim())) {
+                    tasksFound.add(t);
+                }
+            }
+            if (!tasksFound.isEmpty()) {
+                Ui.showToUser(SEARCH_HEADER);
+            } else {
+                Ui.showToUser(NO_TASKS_FOUND);
+            }
+
+            for (Task t : tasksFound) {
+                Ui.showToUser(String.format("%d" + ". ", tasksFound.indexOf(t) + 1) + t);
+            }
+        } catch (IllegalArgumentException e) {
+            Ui.showError(FIND_USAGE);
         }
     }
 }
