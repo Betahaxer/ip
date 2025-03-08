@@ -14,8 +14,8 @@ import static Constants.Formatting.TAB;
  * and greeting or saying goodbye to the user.
  */
 public class Messages {
-    public static final String GREETING = TAB + "Hello! I'm Bond, a dog that can predict the future.\n" + TAB + "What can I do for you?\n" + GREEN + COMMAND;
-    public static final String GOODBYE = TAB + "Woof. Hope to see you again soon!";
+    public static final String GREETING = "Hello! I'm Bond, a dog that can predict the future.\n" + "What can I do for you?\n";
+    public static final String GOODBYE = "Woof. Hope to see you again soon!";
     public static final String LIST_HEADER = "Hmph... The future is uncertain, but these tasks must be completed:";
     public static final String LIST_FOOTER = "Woof %d tasks… I see them all… woof";
     public static final String MARK_USAGE = "Grr... Want to mark a task? Try this: mark {task_number}.";
@@ -29,7 +29,10 @@ public class Messages {
     public static final String EVENT_USAGE = "Planning something? Tell me like this: event {event_description} /from {date/time} /to {date/time}.";
     public static final String DELETE_USAGE = "Grrr... Removing something? Just say: remove {task_number}.";
     public static final String TASK_DELETED = "Woof! Task %s has been removed. Hope it wasn't a snack!";
-    public static final String INVALID_COMMAND = "Uh-oh... That command doesn't smell right! Try one of these: todo, deadline, event, mark, unmark, list, delete.";
+    public static final String INVALID_COMMAND = "Uh-oh... That command doesn't smell right! Try one of these: todo, deadline, event, mark, unmark, list, delete, find.";
+    public static final String SEARCH_HEADER = "Woof. These tasks smell like a match for your search:";
+    public static final String NO_TASKS_FOUND = "Hmph... No tasks found. Must’ve been a stealthy one.\uD83D\uDD75\uFE0F\u200D♂\uFE0F";
+    public static final String FIND_USAGE = "Ears twitch... That format’s all wrong! Try: find {search_term}.\uD83D\uDD0E";
     public static final String BOND_ASCII =
             "⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" +
                     "⠀⠀⠀⠀⠀⠾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣶⣄⠀⠀⠀⠀\n" +
