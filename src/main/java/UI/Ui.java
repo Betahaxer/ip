@@ -1,6 +1,7 @@
 package UI;
 
 import static Constants.Formatting.COMMAND;
+import static Constants.Formatting.RED;
 import static Constants.Formatting.TAB;
 import static Constants.Formatting.WHITE;
 import static Constants.Messages.GOODBYE;
@@ -26,29 +27,32 @@ public class Ui {
 
 
     public static void greet() {
-        System.out.print(GREETING);
+        Ui.showToUser(GREETING);
+        Ui.showCommandArrow();
     }
 
     public static void sayBye() {
-        System.out.println(GOODBYE);
+        Ui.showToUser(GOODBYE);
     }
 
     public static void printList() {
         ArrayList<Task> tasks = TaskList.getTasks();
-        System.out.println(TAB + LIST_HEADER);
+        Ui.showToUser(LIST_HEADER);
         for (Task t : tasks) {
-            System.out.printf(TAB + WHITE + "%d" + ". ", tasks.indexOf(t) + 1);
-            System.out.println(t);
+            Ui.showToUser(String.format("%d" + ". ", tasks.indexOf(t) + 1) + t);
         }
-        System.out.println(TAB + String.format(LIST_FOOTER, tasks.size()));
+        Ui.showToUser(String.format(LIST_FOOTER, tasks.size()));
     }
 
     public static void showError(String message) {
-        System.out.println(message);
+        System.out.println(TAB + RED + message);
     }
 
     public static void showToUser(String message) {
-        System.out.println(message);
+        String[] splitMessage = message.split("\n");
+        for (String m : splitMessage) {
+            System.out.println(TAB + WHITE + m);
+        }
     }
 
     public static void showCommandArrow() {

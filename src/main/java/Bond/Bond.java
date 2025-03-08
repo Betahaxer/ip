@@ -23,10 +23,11 @@ public class Bond {
                 Command c = Parser.parseInput(fullInputLine);
                 c.executeCommand();
             } catch (IllegalArgumentException e) {
-                Ui.showError(TAB + INVALID_COMMAND);
+                Ui.showError(INVALID_COMMAND);
             } finally {
                 Ui.showCommandArrow();
                 fullInputLine = Ui.getUserCommand();
+
             }
         }
 
