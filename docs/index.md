@@ -280,3 +280,8 @@ A: Don't worry—your tasks will be preserved. However, it’s recommended to us
 Enjoy using **Bond's Mission Tracker**, where no mission is left behind! If you need assistance, reach out and we'll be
 right
 by your side, just like any good partner would.
+<style>
+  .footer {
+    display: none;
+  }
+</style>
